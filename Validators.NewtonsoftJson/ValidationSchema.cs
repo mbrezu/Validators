@@ -36,8 +36,13 @@ namespace Validators.NewtonsoftJson
             typeof(decimal)
         };
 
-        public static ValidationSchema FromType(Type type, bool ignoreCase = true, bool allowExtras = true)
+        public static ValidationSchema FromType(
+            Type type, ValidationSchemaOptions? options = null)
         {
+            if (options == null)
+            {
+                options = ValidationSchemaOptions.Empty;
+            }
             var others = new List<TypeValidation>();
             string getTypeName(Type type) => type.FullName ?? type.Name;
             bool isArray(Type type)
@@ -58,7 +63,7 @@ namespace Validators.NewtonsoftJson
                 }
                 else if (type.IsEnum)
                 {
-                    return new OneOfSpec(ignoreCase, Enum.GetNames(type));
+                    return new OneOfSpec(options!.IgnoreCase, Enum.GetNames(type));
                 }
                 else if (isArray(type))
                 {
@@ -80,23 +85,51 @@ namespace Validators.NewtonsoftJson
                     return new TypeSpec(name);
                 }
             }
-            bool isRequired(Type type)
-            {
-                var isNullable = type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
-                return !isNullable;
-            }
             TypeValidation fromType(Type type)
             {
                 var properties = type.GetProperties();
                 var fieldValidations = properties
-                    .Select(x => new FieldValidation(x.Name, isRequired(x.PropertyType), getValidatorSpec(x.PropertyType)))
+                    .Select(x => new FieldValidation(
+                        x.Name,
+                        options!.IsRequired(getTypeName(type), x.Name, x.PropertyType),
+                        getValidatorSpec(x.PropertyType)))
                     .ToList();
                 return new TypeValidation(
                     getTypeName(type),
-                    allowExtras,
+                    options!.AllowExtras,
                     fieldValidations);
             }
             return new ValidationSchema(fromType(type), others);
+        }
+    }
+
+    public record TypeAndProperty(string Type, string Property);
+
+    public record ValidationSchemaOptions(
+        bool IgnoreCase,
+        bool AllowExtras,
+        IEnumerable<TypeAndProperty>? Required = null,
+        IEnumerable<TypeAndProperty>? Optional = null)
+    {
+        private static readonly ValidationSchemaOptions _empty = new(true, true);
+#pragma warning disable RCS1085 // Use auto-implemented property.
+        public static ValidationSchemaOptions Empty => _empty;
+#pragma warning restore RCS1085 // Use auto-implemented property.
+
+        public bool IsRequired(string typeName, string propertyName, Type propertyType)
+        {
+            bool isMentioned(IEnumerable<TypeAndProperty>? list)
+                => list?.Any(x => x.Type == typeName && x.Property == propertyName) == true;
+            if (isMentioned(Required))
+            {
+                return true;
+            }
+            if (isMentioned(Optional))
+            {
+                return false;
+            }
+            var isNullable = propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof(Nullable<>);
+            return !isNullable;
         }
     }
 

@@ -2,7 +2,18 @@
 using Newtonsoft.Json.Linq;
 using Validators.NewtonsoftJson;
 
-var schema = ValidationSchema.FromType(typeof(Team), allowExtras: false);
+var schema = ValidationSchema.FromType(typeof(Team), ValidationSchemaOptions.Empty with
+{
+    AllowExtras = true,
+    Required = new TypeAndProperty[]
+    {
+        new TypeAndProperty(typeof(Person).FullName!, nameof(Person.DateOfBirth))
+    },
+    Optional = new TypeAndProperty[]
+    {
+        new TypeAndProperty(typeof(Team).FullName!, nameof(Team.CreationDate))
+    }
+});
 var validator = schema.GetValidator(true);
 var json = JsonConvert.SerializeObject(schema, Formatting.Indented);
 Console.WriteLine(json);
@@ -13,7 +24,8 @@ var doc = JObject.Parse("""
         "Lead": {
             "Name": "John",
             "Age": 35,
-            "Kind": "firstkind"
+            "Kind": "firstkind",
+            "DateOfBirth": "aaa"
         },
         "Members": [
             {
