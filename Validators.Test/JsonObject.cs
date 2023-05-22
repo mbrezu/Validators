@@ -15,7 +15,7 @@ namespace Validators.Test
                     "a": true
                 }
                 """);
-            var validator = ValidKeys("a");
+            var validator = HasValidKeys("a");
 
             // Act
             var errors = validator.Validate(target);
@@ -34,7 +34,7 @@ namespace Validators.Test
                     "b": null
                 }
                 """);
-            var validator = ValidKeys("a");
+            var validator = HasValidKeys("a");
 
             // Act
             var errors = validator.Validate(target);
@@ -93,7 +93,7 @@ namespace Validators.Test
                     "b": false
                 }
                 """);
-            var validator = RequiredKeys("a", "b");
+            var validator = HasRequiredKeys("a", "b");
 
             // Act
             var errors = validator.Validate(target);
@@ -112,7 +112,7 @@ namespace Validators.Test
                     "b": false
                 }
                 """);
-            var validator = RequiredKeys("a", "b", "c");
+            var validator = HasRequiredKeys("a", "b", "c");
 
             // Act
             var errors = validator.Validate(target);

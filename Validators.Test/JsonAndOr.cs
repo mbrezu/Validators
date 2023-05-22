@@ -18,8 +18,8 @@ namespace Validators.Test
                 """);
             var validator = And(
                 IsObject,
-                RequiredKeys("a", "b"),
-                ValidKeys("a", "b"),
+                HasRequiredKeys("a", "b"),
+                HasValidKeys("a", "b"),
                 DiveInto("a", IsNumber),
                 DiveInto("b", IsNumber));
 
@@ -42,8 +42,8 @@ namespace Validators.Test
                 """);
             var validator = And(
                 IsObject,
-                RequiredKeys("a", "b", "c"),
-                ValidKeys("a", "b"),
+                HasRequiredKeys("a", "b", "c"),
+                HasValidKeys("a", "b"),
                 DiveInto("a", IsNumber),
                 DiveInto("b", IsNumber));
 

@@ -15,8 +15,8 @@ var obj = JObject.Parse(document);
 
 var abValidator = And(
     IsObject,
-    ValidKeys("a", "b", "c", "d", "e"),
-    RequiredKeys("a", "b", "c"),
+    HasValidKeys("a", "b", "c", "d", "e"),
+    HasRequiredKeys("a", "b", "c"),
     DiveInto("a", IsNumber),
     DiveInto("b", IsString),
     DiveInto("c", IsBoolean),

@@ -83,6 +83,44 @@ namespace Validators.Test
         }
 
         [Fact]
+        public void TestOneOfPasses()
+        {
+            // Arrange.
+            var target = JObject.Parse("""
+                {
+                    "a": "str"
+                }
+                """);
+            var validator = IsOneOf("str", "test");
+
+            // Act.
+            var errors = validator.Validate(target["a"]!);
+
+            // Assert.
+            errors.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void TestOneOfFails()
+        {
+            // Arrange.
+            var target = JObject.Parse("""
+                {
+                    "a": "foo"
+                }
+                """);
+            var validator = IsOneOf("str", "test");
+
+            // Act.
+            var errors = validator.Validate(target["a"]!);
+
+            // Assert.
+            errors.Should().HaveCount(1);
+            errors.First().Message.Should().Be("""Not one of ("str", "test").""");
+            errors.First().Path.Should().BeEmpty();
+        }
+
+        [Fact]
         public void TestBooleanPasses()
         {
             // Arrange.
