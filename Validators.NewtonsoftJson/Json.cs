@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using System.Text.RegularExpressions;
 using Validators.Core;
 
 namespace Validators.NewtonsoftJson
@@ -8,6 +9,7 @@ namespace Validators.NewtonsoftJson
         public static IValidator<JToken> IsNumber => TypeValidator.Number;
         public static IValidator<JToken> IsString => TypeValidator.String;
         public static IValidator<JToken> IsOneOf(params string[] options) => new OneOfString(options);
+        public static IValidator<JToken> MatchesRegex(Regex regex) => new MatchesRegex(regex);
         public static IValidator<JToken> IsBoolean => TypeValidator.Boolean;
         public static IValidator<JToken> IsNull => TypeValidator.Null;
         public static IValidator<JToken> IsObject => TypeValidator.Object;

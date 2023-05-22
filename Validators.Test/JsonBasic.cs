@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Newtonsoft.Json.Linq;
+using System.Text.RegularExpressions;
 using static Validators.NewtonsoftJson.Json;
 
 namespace Validators.Test
@@ -117,6 +118,44 @@ namespace Validators.Test
             // Assert.
             errors.Should().HaveCount(1);
             errors.First().Message.Should().Be("""Not one of ("str", "test").""");
+            errors.First().Path.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void TestMatchesRegexPasses()
+        {
+            // Arrange.
+            var target = JObject.Parse("""
+                {
+                    "a": "2023-05-22"
+                }
+                """);
+            var validator = MatchesRegex(new Regex(@"\d{4}-\d{2}-\d{2}"));
+
+            // Act.
+            var errors = validator.Validate(target["a"]!);
+
+            // Assert.
+            errors.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void TestMatchesRegexFails()
+        {
+            // Arrange.
+            var target = JObject.Parse("""
+                {
+                    "a": "a2023-05-22"
+                }
+                """);
+            var validator = MatchesRegex(new Regex(@"^\d{4}-\d{2}-\d{2}$"));
+
+            // Act.
+            var errors = validator.Validate(target["a"]!);
+
+            // Assert.
+            errors.Should().HaveCount(1);
+            errors.First().Message.Should().Be("""Not a match for regex ^\d{4}-\d{2}-\d{2}$.""");
             errors.First().Path.Should().BeEmpty();
         }
 

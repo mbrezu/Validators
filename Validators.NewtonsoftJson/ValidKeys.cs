@@ -23,7 +23,7 @@ namespace Validators.NewtonsoftJson
                 var comparer = _ignoreCase
                     ? StringComparer.InvariantCultureIgnoreCase
                     : StringComparer.InvariantCulture;
-                foreach (var (k, v) in targetObject)
+                foreach (var (k, _) in targetObject)
                 {
                     if (!_validKeys.Contains(k, comparer))
                     {
