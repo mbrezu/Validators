@@ -8,7 +8,10 @@ namespace Validators.NewtonsoftJson
     {
         public static IValidator<JToken> IsNumber => TypeValidator.Number;
         public static IValidator<JToken> IsString => TypeValidator.String;
-        public static IValidator<JToken> IsOneOf(params string[] options) => new OneOfString(options);
+        public static IValidator<JToken> IsOneOf(bool ignoreCase, params string[] options)
+            => new OneOfString(ignoreCase, options);
+        public static IValidator<JToken> IsOneOf(params string[] options)
+            => new OneOfString(true, options);
         public static IValidator<JToken> MatchesRegex(Regex regex) => new MatchesRegex(regex);
         public static IValidator<JToken> CustomValidator(string name, Func<JToken, bool> validator)
             => new CustomValidator(name, validator);
@@ -18,7 +21,7 @@ namespace Validators.NewtonsoftJson
         public static IValidator<JToken> IsArrayOf(
             IValidator<JToken> elementValidator, int? minCount = null, int? maxCount = null)
             => new ArrayOf(elementValidator, minCount, maxCount);
-        public static IValidator<JToken> HasKey(string key) => new HasKey(key);
+        public static IValidator<JToken> HasKey(string key) => new HasKey(key: key);
         public static IValidator<JToken> DiveInto(string key, IValidator<JToken> valueValidator)
             => new DiveInto(key, valueValidator);
         public static IValidator<JToken> HasValidKeys(bool ignoreCase, params string[] validKeys)
