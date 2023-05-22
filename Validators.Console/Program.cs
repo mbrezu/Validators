@@ -1,29 +1,44 @@
-﻿using Newtonsoft.Json.Linq;
-using static Validators.NewtonsoftJson.Json;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Validators.NewtonsoftJson;
 
-var document = """
+var schema = ValidationSchema.FromType(typeof(Team), allowExtras: false);
+var validator = schema.GetValidator(true);
+var json = JsonConvert.SerializeObject(schema, Formatting.Indented);
+Console.WriteLine(json);
+
+var doc = JObject.Parse("""
     {
-        "a": 10,
-        "b": "string",
-        "c": true,
-        //"d": null,
-        //"e": [1, 2, "f", true]
+        "Extra": 0,
+        "Lead": {
+            "Name": "John",
+            "Age": 35,
+            "Kind": "firstkind"
+        },
+        "Members": [
+            {
+                "Name": "Henry",
+                "Age": 30,
+                "Kind": "secondKind",
+                "DateOfBirth": "yyyy"
+            }
+        ],
+        "Budget": 100,
+        "CreationDate": "xxx"
     }
-    """;
-
-var obj = JObject.Parse(document);
-
-var abValidator = And(
-    IsObject,
-    HasValidKeys("a", "b", "c", "d", "e"),
-    HasRequiredKeys("a", "b", "c"),
-    DiveInto("a", IsNumber),
-    DiveInto("b", IsString),
-    DiveInto("c", IsBoolean),
-    DiveInto("d", IsNull),
-    DiveInto("e", IsArrayOf(Or(IsNumber, IsString, IsBoolean))));
-
-foreach (var err in abValidator.Validate(obj))
+    """);
+Console.WriteLine(doc);
+var errors = validator.Validate(doc).ToList();
+foreach (var error in errors)
 {
-    Console.WriteLine(err);
+    Console.WriteLine(error);
 }
+if (!errors.Any())
+{
+    Console.WriteLine("All good!");
+}
+
+enum PersonKind { FirstKind, SecondKind }
+record Person(string Name, PersonKind Kind, int Age, bool? IsAdmin, DateTime? DateOfBirth);
+
+record Team(Person Lead, IEnumerable<Person> Members, decimal? Budget, DateTime CreationDate);
