@@ -39,7 +39,7 @@ namespace Validators.Test
             errors.First().Message.Should().Be("Not an array.");
             errors.First().Path.Should().BeEmpty();
         }
-        
+
         [Fact]
         public void ArrayPasses()
         {

@@ -44,7 +44,7 @@ namespace Validators.Test
             errors.First().Message.Should().Be("Key 'b' is not valid.");
             errors.First().Path.Should().BeEmpty();
         }
-  
+
         [Fact]
         public void HasKeyPasses()
         {

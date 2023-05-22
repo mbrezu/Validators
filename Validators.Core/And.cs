@@ -11,7 +11,7 @@
 
         public string ObjectName => $"all of ({string.Join(", ", _children.Select(x => x.ObjectName))})";
 
-        public IEnumerable<IValidationError> Validate(T target) 
+        public IEnumerable<IValidationError> Validate(T target)
             => _children.SelectMany(x => x.Validate(target));
     }
 }

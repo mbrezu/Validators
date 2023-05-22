@@ -10,6 +10,8 @@ namespace Validators.NewtonsoftJson
         public static IValidator<JToken> IsString => TypeValidator.String;
         public static IValidator<JToken> IsOneOf(params string[] options) => new OneOfString(options);
         public static IValidator<JToken> MatchesRegex(Regex regex) => new MatchesRegex(regex);
+        public static IValidator<JToken> CustomValidator(string name, Func<JToken, bool> validator)
+            => new CustomValidator(name, validator);
         public static IValidator<JToken> IsBoolean => TypeValidator.Boolean;
         public static IValidator<JToken> IsNull => TypeValidator.Null;
         public static IValidator<JToken> IsObject => TypeValidator.Object;

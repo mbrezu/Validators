@@ -3,17 +3,16 @@ using Validators.Core;
 
 namespace Validators.NewtonsoftJson
 {
-    class TypeValidator : IValidator<JToken>
+    sealed class TypeValidator : IValidator<JToken>
     {
         private readonly JTokenType[] _types;
         private readonly string _message;
-        private readonly string _objectName;
 
         private TypeValidator(string message, string objectName, params JTokenType[] types)
         {
             _types = types;
             _message = message;
-            _objectName = objectName;
+            ObjectName = objectName;
         }
 
         public IEnumerable<IValidationError> Validate(JToken target)
@@ -24,21 +23,24 @@ namespace Validators.NewtonsoftJson
             }
         }
 
-        public string ObjectName => _objectName;
+        public string ObjectName { get; }
 
-        private static TypeValidator _numberInstance = new("Not a number.", "number", JTokenType.Float, JTokenType.Integer);
+        private static readonly TypeValidator _numberInstance = new("Not a number.", "number", JTokenType.Float, JTokenType.Integer);
+#pragma warning disable RCS1085 // Use auto-implemented property.
         public static TypeValidator Number => _numberInstance;
 
-        private static TypeValidator _stringInstance = new("Not a string.", "string", JTokenType.String);
+        private static readonly TypeValidator _stringInstance = new("Not a string.", "string", JTokenType.String);
         public static TypeValidator String => _stringInstance;
 
-        private static TypeValidator _boolInstance = new("Not a boolean.", "boolean", JTokenType.Boolean);
+        private static readonly TypeValidator _boolInstance = new("Not a boolean.", "boolean", JTokenType.Boolean);
         public static TypeValidator Boolean => _boolInstance;
 
-        private static TypeValidator _nullInstance = new("Not 'null'.", "null", JTokenType.Null);
+        private static readonly TypeValidator _nullInstance = new("Not 'null'.", "null", JTokenType.Null);
         public static TypeValidator Null => _nullInstance;
 
-        private static TypeValidator _objectInstance = new("Not an object.", "object", JTokenType.Object);
+        private static readonly TypeValidator _objectInstance = new("Not an object.", "object", JTokenType.Object);
+
         public static TypeValidator Object => _objectInstance;
+#pragma warning restore RCS1085 // Use auto-implemented property.
     }
 }

@@ -130,7 +130,9 @@ namespace Validators.Test
                     "a": "2023-05-22"
                 }
                 """);
+#pragma warning disable SYSLIB1045 // Convert to 'GeneratedRegexAttribute'.
             var validator = MatchesRegex(new Regex(@"^\d{4}-\d{2}-\d{2}$"));
+#pragma warning restore SYSLIB1045 // Convert to 'GeneratedRegexAttribute'.
 
             // Act.
             var errors = validator.Validate(target["a"]!);
@@ -148,7 +150,9 @@ namespace Validators.Test
                     "a": "a2023-05-22"
                 }
                 """);
+#pragma warning disable SYSLIB1045 // Convert to 'GeneratedRegexAttribute'.
             var validator = MatchesRegex(new Regex(@"^\d{4}-\d{2}-\d{2}$"));
+#pragma warning restore SYSLIB1045 // Convert to 'GeneratedRegexAttribute'.
 
             // Act.
             var errors = validator.Validate(target["a"]!);
@@ -156,6 +160,48 @@ namespace Validators.Test
             // Assert.
             errors.Should().HaveCount(1);
             errors.First().Message.Should().Be("""Not a match for regex ^\d{4}-\d{2}-\d{2}$.""");
+            errors.First().Path.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void TestCustomValidatorPasses()
+        {
+            // Arrange.
+            var target = JObject.Parse("""
+                {
+                    "a": "2023-05-22"
+                }
+                """);
+            var validator = CustomValidator(
+                "a date",
+                t => DateTime.TryParse((string?)(t.Value<string>() ?? ""), out _));
+
+            // Act.
+            var errors = validator.Validate(target["a"]!);
+
+            // Assert.
+            errors.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void TestCustomValidatorFails()
+        {
+            // Arrange.
+            var target = JObject.Parse("""
+                {
+                    "a": "2023-25-22"
+                }
+                """);
+            var validator = CustomValidator(
+                "a date",
+                t => DateTime.TryParse((string?)(t.Value<string>() ?? ""), out _));
+
+            // Act.
+            var errors = validator.Validate(target["a"]!);
+
+            // Assert.
+            errors.Should().HaveCount(1);
+            errors.First().Message.Should().Be("""Not a date.""");
             errors.First().Path.Should().BeEmpty();
         }
 
