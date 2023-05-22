@@ -21,9 +21,14 @@ namespace Validators.NewtonsoftJson
         public static IValidator<JToken> IsArrayOf(
             IValidator<JToken> elementValidator, int? minCount = null, int? maxCount = null)
             => new ArrayOf(elementValidator, minCount, maxCount);
-        public static IValidator<JToken> HasKey(string key) => new HasKey(key: key);
+        public static IValidator<JToken> HasKey(bool ignoreCase, string key)
+            => new HasKey(ignoreCase, key);
+        public static IValidator<JToken> HasKey(string key) => new HasKey(true, key);
+        public static IValidator<JToken> DiveInto(
+            bool ignoreCase, string key, IValidator<JToken> valueValidator)
+            => new DiveInto(ignoreCase, key, valueValidator);
         public static IValidator<JToken> DiveInto(string key, IValidator<JToken> valueValidator)
-            => new DiveInto(key, valueValidator);
+            => new DiveInto(true, key, valueValidator);
         public static IValidator<JToken> HasValidKeys(bool ignoreCase, params string[] validKeys)
             => new ValidKeys(ignoreCase, validKeys);
         public static IValidator<JToken> HasValidKeys(params string[] validKeys)

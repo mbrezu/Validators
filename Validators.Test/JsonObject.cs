@@ -85,7 +85,7 @@ namespace Validators.Test
         }
 
         [Fact]
-        public void HasKeyPasses()
+        public void HasKeyPassesCaseInsensitive()
         {
             // Arrange
             var target = JObject.Parse("""
@@ -93,7 +93,25 @@ namespace Validators.Test
                     "a": true
                 }
                 """);
-            var validator = HasKey("a");
+            var validator = HasKey("A");
+
+            // Act
+            var errors = validator.Validate(target);
+
+            // Assert
+            errors.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void HasKeyPassesCaseSensitive()
+        {
+            // Arrange
+            var target = JObject.Parse("""
+                {
+                    "a": true
+                }
+                """);
+            var validator = HasKey(false, "a");
 
             // Act
             var errors = validator.Validate(target);
@@ -119,6 +137,26 @@ namespace Validators.Test
             // Assert
             errors.Should().HaveCount(1);
             errors.First().Message.Should().Be("Doesn't have key 'a'.");
+            errors.First().Path.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void HasKeyFailsCaseSensitive()
+        {
+            // Arrange
+            var target = JObject.Parse("""
+                {
+                    "b": true
+                }
+                """);
+            var validator = HasKey(false, "B");
+
+            // Act
+            var errors = validator.Validate(target);
+
+            // Assert
+            errors.Should().HaveCount(1);
+            errors.First().Message.Should().Be("Doesn't have key 'B'.");
             errors.First().Path.Should().BeEmpty();
         }
 
@@ -203,7 +241,7 @@ namespace Validators.Test
         }
 
         [Fact]
-        public void DiveIntoPasses()
+        public void DiveIntoPassesCaseInsensitive()
         {
             // Arrange
             var target = JObject.Parse("""
@@ -212,7 +250,31 @@ namespace Validators.Test
                     "b": false
                 }
                 """);
-            var validator = DiveInto("a", IsBoolean);
+            var validator = DiveInto("A", IsBoolean);
+
+            // Act
+            var errors = validator.Validate(target);
+
+            // Assert
+            errors.Should().BeEmpty();
+        }
+
+        // This is a little weird. :-)
+        //
+        // The test passes because:
+        // * the comparison is case sensitive,
+        // * there is no 'A' key in the object and
+        // * diving in succeeds when there is no key with the given name.
+        [Fact]
+        public void DiveIntoPassesCaseSensitive()
+        {
+            // Arrange
+            var target = JObject.Parse("""
+                {
+                    "a": null,
+                }
+                """);
+            var validator = DiveInto(false, "A", IsBoolean);
 
             // Act
             var errors = validator.Validate(target);
@@ -222,7 +284,7 @@ namespace Validators.Test
         }
 
         [Fact]
-        public void DiveIntoFails()
+        public void DiveIntoFailsCaseInsensitive()
         {
             // Arrange
             var target = JObject.Parse("""
@@ -231,7 +293,28 @@ namespace Validators.Test
                     "b": false
                 }
                 """);
-            var validator = DiveInto("a", IsNull);
+            var validator = DiveInto("A", IsNull);
+
+            // Act
+            var errors = validator.Validate(target);
+
+            // Assert
+            errors.Should().HaveCount(1);
+            errors.First().Message.Should().Be("Not 'null'.");
+            errors.First().Path.Should().BeEquivalentTo(new string[] { "A" });
+        }
+
+        [Fact]
+        public void DiveIntoFailsCaseSensitive()
+        {
+            // Arrange
+            var target = JObject.Parse("""
+                {
+                    "a": true,
+                    "b": false
+                }
+                """);
+            var validator = DiveInto(false, "a", IsNull);
 
             // Act
             var errors = validator.Validate(target);

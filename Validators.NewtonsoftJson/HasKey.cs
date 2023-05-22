@@ -5,10 +5,12 @@ namespace Validators.NewtonsoftJson
 {
     class HasKey : IValidator<JToken>
     {
+        private readonly bool _ignoreCase;
         private readonly string _key;
 
-        public HasKey(string key)
+        public HasKey(bool ignoreCase, string key)
         {
+            _ignoreCase = ignoreCase;
             _key = key;
         }
 
@@ -18,7 +20,10 @@ namespace Validators.NewtonsoftJson
         {
             if (target is JObject targetObject)
             {
-                if (!targetObject.ContainsKey(_key))
+                var comparison = _ignoreCase
+                    ? StringComparison.InvariantCultureIgnoreCase
+                    : StringComparison.InvariantCulture;
+                if (!targetObject.TryGetValue(_key, comparison, out _))
                 {
                     yield return new DefaultValidationError { Message = $"Doesn't have key '{_key}'." };
                 }

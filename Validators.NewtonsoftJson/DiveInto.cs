@@ -5,11 +5,13 @@ namespace Validators.NewtonsoftJson
 {
     class DiveInto : IValidator<JToken>
     {
+        private readonly bool _ignoreCase;
         private readonly string _key;
         private readonly IValidator<JToken> _valueValidator;
 
-        public DiveInto(string key, IValidator<JToken> valueValidator)
+        public DiveInto(bool ignoreCase, string key, IValidator<JToken> valueValidator)
         {
+            _ignoreCase = ignoreCase;
             _key = key;
             _valueValidator = valueValidator;
         }
@@ -20,11 +22,13 @@ namespace Validators.NewtonsoftJson
         {
             if (target is JObject targetObject)
             {
-                if (!targetObject.ContainsKey(_key))
+                var comparison = _ignoreCase
+                    ? StringComparison.InvariantCultureIgnoreCase
+                    : StringComparison.InvariantCulture;
+                if (!targetObject.TryGetValue(_key, comparison, out var value))
                 {
                     yield break;
                 }
-                var value = targetObject.GetValue(_key)!;
                 foreach (var error in _valueValidator.Validate(value))
                 {
                     yield return error.Wrap(_key);
