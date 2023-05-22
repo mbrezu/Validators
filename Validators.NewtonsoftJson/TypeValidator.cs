@@ -38,7 +38,7 @@ namespace Validators.NewtonsoftJson
         private static TypeValidator _nullInstance = new("Not 'null'.", "null", JTokenType.Null);
         public static TypeValidator Null => _nullInstance;
 
-        private static TypeValidator _objectInstance = new("Not a string.", "string", JTokenType.Object);
+        private static TypeValidator _objectInstance = new("Not an object.", "object", JTokenType.Object);
         public static TypeValidator Object => _objectInstance;
     }
 }

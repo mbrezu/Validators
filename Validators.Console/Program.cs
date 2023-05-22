@@ -6,8 +6,8 @@ var document = """
         "a": 10,
         "b": "string",
         "c": true,
-        "d": null,
-        "e": [1, 2, "f", true]
+        //"d": null,
+        //"e": [1, 2, "f", true]
     }
     """;
 
