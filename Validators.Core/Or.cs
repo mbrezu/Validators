@@ -20,7 +20,7 @@
                     yield break;
                 }
             }
-            yield return new DefaultValidationError { Message = $"not {ObjectName}" };
+            yield return new DefaultValidationError { Message = $"Not {ObjectName}." };
         }
     }
 }
