@@ -10,8 +10,9 @@ namespace Validators.NewtonsoftJson
         public static IValidator<JToken> IsBoolean => TypeValidator.Boolean;
         public static IValidator<JToken> IsNull => TypeValidator.Null;
         public static IValidator<JToken> IsObject => TypeValidator.Object;
-        public static IValidator<JToken> IsArrayOf(IValidator<JToken> elementValidator)
-            => new ArrayOf(elementValidator);
+        public static IValidator<JToken> IsArrayOf(
+            IValidator<JToken> elementValidator, int? minCount = null, int? maxCount = null)
+            => new ArrayOf(elementValidator, minCount, maxCount);
         public static IValidator<JToken> HasKey(string key) => new HasKey(key);
         public static IValidator<JToken> DiveInto(string key, IValidator<JToken> valueValidator)
             => new DiveInto(key, valueValidator);

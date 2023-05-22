@@ -93,5 +93,73 @@ namespace Validators.Test
             errors.ElementAt(1).Message.Should().Be("Not a string.");
             errors.ElementAt(1).Path.Should().BeEquivalentTo(new string[] { "2" });
         }
+
+        [Fact]
+        public void ArrayMinCountPasses()
+        {
+            // Arrange
+            var target = JArray.Parse("""
+                [1, 2, 3]
+                """);
+            var validator = IsArrayOf(IsNumber, 3);
+
+            // Act
+            var errors = validator.Validate(target);
+
+            // Assert
+            errors.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void ArrayMinCountFails()
+        {
+            // Arrange
+            var target = JArray.Parse("""
+                [1, 2, 3]
+                """);
+            var validator = IsArrayOf(IsNumber, 5);
+
+            // Act
+            var errors = validator.Validate(target);
+
+            // Assert
+            errors.Should().HaveCount(1);
+            errors.First().Message.Should().Be("Array count is 3, but should be at least 5.");
+            errors.First().Path.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void ArrayMaxCountPasses()
+        {
+            // Arrange
+            var target = JArray.Parse("""
+                [1, 2, 3]
+                """);
+            var validator = IsArrayOf(IsNumber, null, 3);
+
+            // Act
+            var errors = validator.Validate(target);
+
+            // Assert
+            errors.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void ArrayMaxCountFails()
+        {
+            // Arrange
+            var target = JArray.Parse("""
+                [1, 2, 3]
+                """);
+            var validator = IsArrayOf(IsNumber, null, 2);
+
+            // Act
+            var errors = validator.Validate(target);
+
+            // Assert
+            errors.Should().HaveCount(1);
+            errors.First().Message.Should().Be("Array count is 3, but should be at most 2.");
+            errors.First().Path.Should().BeEmpty();
+        }
     }
 }
