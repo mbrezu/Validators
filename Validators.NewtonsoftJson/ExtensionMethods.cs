@@ -13,10 +13,9 @@ namespace Validators.NewtonsoftJson
                 {
                     return content;
                 }
-                if (content is JObject obj)
+                else if (content is JObject obj && obj.ContainsKey(path.First()))
                 {
-                    var key = path.First();
-                    return extract(content[key], path.Skip(1));
+                    return extract(content[path.First()], path.Skip(1));
                 }
                 else if (content is JArray arr && int.TryParse(path.First(), out var index))
                 {
