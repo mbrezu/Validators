@@ -26,7 +26,7 @@ namespace Validators.NewtonsoftJson
                     return content;
                 }
             }
-            return extract(content, error.Path);
+            return extract(content, error.Path.Reverse());
         }
     }
 }
