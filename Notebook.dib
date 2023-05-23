@@ -136,7 +136,80 @@ valid
 
 #!markdown
 
+Let's add arrays to the content:
+
+#!csharp
+
+var targetArray = JArray.Parse("""
+    [
+        {
+            "a": 1,
+            "b": 2,
+        },
+        {
+            "a": 1,
+            "b": "foo",
+        },
+    ]
+    """);
+
+#!markdown
+
+The validator:
+* expects an array and
+* tolerates both strings and numbers in the `"b"` property.
+
+#!csharp
+
+validator = IsArrayOf(And(
+    IsObject,
+    HasRequiredKeys("a", "b"),
+    DiveInto("a", IsNumber),
+    DiveInto("b", Or(IsNumber, IsString))));
+valid = !validator.Validate(targetArray).Any();
+valid
+
+#!markdown
+
 ## Dictionaries
+
+#!markdown
+
+Dictionaries are "generic objects": we don't have any expectations about the keys, but we want to validate the values.
+
+#!csharp
+
+target = JObject.Parse("""
+    {
+        "a": 1,
+        "b": 2,
+        "c": "three",
+        "d": true
+    }
+    """);
+validator = IsDictionaryOf(IsNumber);
+validator.Validate(target)
+
+#!markdown
+
+We could configure the validator to accept numbers, strings and booleans to make a validator that accepts the above `target`.
+We could also turn off validation by using the `IsAnything` validator.
+
+#!csharp
+
+validator = IsDictionaryOf(IsAnything);
+valid = !validator.Validate(target).Any();
+valid
+
+#!markdown
+
+And to completely turn validation off, we could just use `IsAnything`:
+
+#!csharp
+
+validator = IsAnything;
+valid = !validator.Validate(targetArray).Any();
+valid
 
 #!markdown
 
