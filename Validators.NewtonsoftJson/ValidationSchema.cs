@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
@@ -227,7 +227,9 @@ namespace Validators.NewtonsoftJson
     {
         public override IValidator<JToken> GetValidator(
             Dictionary<string, IValidator<JToken>> existingValidators)
-            => existingValidators[TypeName];
+            => existingValidators.ContainsKey(TypeName)
+            ? existingValidators[TypeName]
+            : IsAnything;
     }
 
     public record ArraySpec(ValidatorSpec ElementValidator)
