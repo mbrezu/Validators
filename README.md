@@ -40,10 +40,10 @@ The content above is from [`Program.cs`](Validators.Console/Program.cs).
 See also:
 * [A C# Notebook](Notebook.dib)
 * [tests](Validators.Test)
-  * [Basic validators](Validators.Test\JsonBasic.cs)
-  * [Automatic validator generation for non-trivial objects](Validators.Test\JsonValidationSchema\NestedTwo.cs)
-  * [Extract the invalid content](Validators.Test\ContentExtraction.cs)
-  * [Generic dictionaries](Validators.Test\JsonDictionary.cs)
+  * [Basic validators](Validators.Test/JsonBasic.cs)
+  * [Automatic validator generation for non-trivial objects](Validators.Test/JsonValidationSchema/NestedTwo.cs)
+  * [Extract the invalid content](Validators.Test/ContentExtraction.cs)
+  * [Generic dictionaries](Validators.Test/JsonDictionary.cs)
 
 ## License
 
