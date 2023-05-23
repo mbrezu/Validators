@@ -1,4 +1,4 @@
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using Validators.Core;
 
@@ -6,6 +6,10 @@ namespace Validators.NewtonsoftJson
 {
     public static class Json
     {
+        private static readonly IValidator<JToken> _anything = new Anything<JToken>();
+#pragma warning disable RCS1085 // Use auto-implemented property.
+        public static IValidator<JToken> IsAnything => _anything;
+#pragma warning restore RCS1085 // Use auto-implemented property.
         public static IValidator<JToken> IsNumber => TypeValidator.Number;
         public static IValidator<JToken> IsString => TypeValidator.String;
         public static IValidator<JToken> IsOneOf(bool ignoreCase, params string[] options)

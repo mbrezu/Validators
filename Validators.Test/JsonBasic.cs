@@ -8,6 +8,24 @@ namespace Validators.Test
     public class JsonBasic
     {
         [Fact]
+        public void AnythingPasses()
+        {
+            // Arrange.
+            var target = JObject.Parse("""
+                {
+                    "a": 1
+                }
+                """);
+            var validator = IsAnything;
+
+            // Act.
+            var errors = validator.Validate(target);
+
+            // Assert.
+            errors.Should().BeEmpty();
+        }
+
+        [Fact]
         public void TestNumberPasses()
         {
             // Arrange.
