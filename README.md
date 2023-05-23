@@ -44,3 +44,7 @@ See also:
   * [Automatic validator generation for non-trivial objects](Validators.Test\JsonValidationSchema\NestedTwo.cs)
   * [Extract the invalid content](Validators.Test\ContentExtraction.cs)
   * [Generic dictionaries](Validators.Test\JsonDictionary.cs)
+
+## License
+
+[License](LICENSE) is BSD 2-clause.
