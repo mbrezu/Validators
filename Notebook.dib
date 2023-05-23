@@ -12,7 +12,7 @@ First things first:
 
 #!csharp
 
-#r "Validators.NewtonsoftJson\bin\Debug\net6.0\Validators.NewtonsoftJson.dll"
+#r "Validators.NewtonsoftJson\bin\Debug\net7.0\Validators.NewtonsoftJson.dll"
 
 using static Validators.NewtonsoftJson.Json;
 using Newtonsoft.Json.Linq;
@@ -39,7 +39,7 @@ Then a validator which checks that:
 
 #!csharp
 
-validator = And(
+var validator = And(
     IsObject,
     HasRequiredKeys("a", "b"),
     DiveInto("a", IsNumber),
@@ -108,6 +108,8 @@ validator.Validate(target).Display();
 We can extract the invalid content:
 
 #!csharp
+
+using Validators.NewtonsoftJson;
 
 var errors = validator.Validate(target);
 var content = errors.First().ExtractInvalidContent(target);
