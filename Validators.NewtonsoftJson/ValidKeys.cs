@@ -31,10 +31,6 @@ namespace Validators.NewtonsoftJson
                     }
                 }
             }
-            else
-            {
-                yield return new DefaultValidationError { Message = "Not an object." };
-            }
         }
     }
 }
