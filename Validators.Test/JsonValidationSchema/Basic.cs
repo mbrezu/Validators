@@ -7,7 +7,7 @@ namespace Validators.Test.JsonValidationSchema
     public class Basic
     {
         [Fact]
-        public void PersonFails()
+        public void Fails()
         {
             // Arrange
             var target = JObject.Parse("""
@@ -31,7 +31,7 @@ namespace Validators.Test.JsonValidationSchema
         }
 
         [Fact]
-        public void PersonPassesCaseInsensitive()
+        public void PassesCaseInsensitive()
         {
             // Arrange
             var target = JObject.Parse("""
@@ -52,7 +52,7 @@ namespace Validators.Test.JsonValidationSchema
         }
 
         [Fact]
-        public void PersonFailsCaseSensitiveKeys()
+        public void FailsCaseSensitive()
         {
             // Arrange
             var target = JObject.Parse("""
@@ -79,7 +79,7 @@ namespace Validators.Test.JsonValidationSchema
         }
 
         [Fact]
-        public void PersonFailsCaseSensitiveValues()
+        public void FailsCaseSensitiveEnums()
         {
             // Arrange
             var target = JObject.Parse("""
@@ -91,7 +91,7 @@ namespace Validators.Test.JsonValidationSchema
                 """);
             var schema = ValidationSchema.FromType(typeof(Person), ValidationSchemaOptions.Empty with
             {
-                IgnoreCase = false
+                EnumIgnoreCase = false
             });
             var validator = schema.GetValidator();
 
@@ -105,7 +105,7 @@ namespace Validators.Test.JsonValidationSchema
         }
 
         [Fact]
-        public void PersonFailsExtraKeys()
+        public void FailsExtraKeys()
         {
             // Arrange
             var target = JObject.Parse("""
@@ -132,7 +132,7 @@ namespace Validators.Test.JsonValidationSchema
         }
 
         [Fact]
-        public void PersonFailsRequiredOption()
+        public void FailsRequiredOption()
         {
             // Arrange
             var target = JObject.Parse("""
@@ -161,7 +161,7 @@ namespace Validators.Test.JsonValidationSchema
         }
         
         [Fact]
-        public void PersonPassesOptionalOption()
+        public void PassesOptionalOption()
         {
             // Arrange
             var target = JObject.Parse("""
