@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
@@ -12,7 +12,7 @@ namespace Validators.NewtonsoftJson
         public IValidator<JToken> GetValidator(bool ignoreCase = true)
         {
             var validators = new Dictionary<string, IValidator<JToken>>();
-            foreach (var type in Others.Reverse())
+            foreach (var type in Others)
             {
                 validators[type.Name] = type.GetValidator(ignoreCase, validators);
             }
@@ -45,6 +45,12 @@ namespace Validators.NewtonsoftJson
             }
             var others = new List<TypeValidation>();
             string getTypeName(Type type) => type.FullName ?? type.Name;
+            Type? getFirstIDictionary(Type type)
+                => type.GetInterfaces().FirstOrDefault(
+                    x => x.IsGenericType
+                    && x.GetGenericTypeDefinition() == typeof(IDictionary<,>)
+                    && x.GetGenericArguments().First() == typeof(string));
+            bool isDictionary(Type type) => getFirstIDictionary(type) != null;
             Type? getFirstIEnumerable(Type type)
                 => type.GetInterfaces().FirstOrDefault(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>));
             bool isArray(Type type) => getFirstIEnumerable(type) != null;
@@ -66,6 +72,11 @@ namespace Validators.NewtonsoftJson
                 {
                     return new OneOfSpec(options!.IgnoreCase, Enum.GetNames(type));
                 }
+                else if (isDictionary(type))
+                {
+                    var elementType = getFirstIDictionary(type)!.GetGenericArguments().ElementAt(1);
+                    return new ArraySpec(getValidatorSpec(elementType));
+                }
                 else if (isArray(type))
                 {
                     var elementType = getFirstIEnumerable(type)!.GetGenericArguments().First();
@@ -78,10 +89,13 @@ namespace Validators.NewtonsoftJson
                 else
                 {
                     var name = getTypeName(type);
-                    var fromOthers = others!.Find(x => x.Name == name);
-                    if (fromOthers == null)
+                    if (name != "System.Object")
                     {
-                        others!.Add(fromType(type));
+                        var fromOthers = others!.Find(x => x.Name == name);
+                        if (fromOthers == null)
+                        {
+                            others!.Add(fromType(type));
+                        }
                     }
                     return new TypeSpec(name);
                 }

@@ -4,14 +4,15 @@ using Validators.NewtonsoftJson;
 
 var schema = ValidationSchema.FromType(typeof(Team), ValidationSchemaOptions.Empty with
 {
-    AllowExtras = true,
+    AllowExtras = false,
     Required = new TypeAndProperty[]
     {
         new TypeAndProperty(typeof(Person).FullName!, nameof(Person.DateOfBirth))
     },
     Optional = new TypeAndProperty[]
     {
-        new TypeAndProperty(typeof(Team).FullName!, nameof(Team.CreationDate))
+        new TypeAndProperty(typeof(Team).FullName!, nameof(Team.CreationDate)),
+        new TypeAndProperty(typeof(Property).FullName!, nameof(Property.People))
     }
 });
 var validator = schema.GetValidator(true);
@@ -20,7 +21,6 @@ Console.WriteLine(json);
 
 var doc = JObject.Parse("""
     {
-        "Extra": 0,
         "Lead": {
             "Name": "John",
             "Age": 35,
@@ -36,7 +36,22 @@ var doc = JObject.Parse("""
             }
         ],
         "Budget": 100,
-        "CreationDate": "xxx"
+        "CreationDate": "xxx",
+        "Properties": [
+            {
+                "Name": "x",
+                "Value": 1
+            },
+            {
+                "Name": "y",
+                "Value": 2,
+                "People": [
+                    1, 
+                    {
+                    }
+                ]
+            },
+        ]
     }
     """);
 Console.WriteLine(doc);
@@ -52,5 +67,5 @@ if (!errors.Any())
 
 enum PersonKind { FirstKind, SecondKind }
 record Person(string Name, PersonKind Kind, int Age, bool? IsAdmin, DateTime? DateOfBirth);
-
-record Team(Person Lead, Person[] Members, decimal? Budget, DateTime CreationDate);
+record Property(string Name, object Value, Person[] People);
+record Team(Person Lead, Person[] Members, decimal? Budget, DateTime CreationDate, Dictionary<string, Property> Properties);
