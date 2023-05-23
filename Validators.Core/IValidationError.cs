@@ -17,7 +17,7 @@ namespace Validators.Core
         {
             if (Path.Any())
             {
-                return $"{string.Join(".", Path)}: {Message}";
+                return $"{string.Join(".", Path.Reverse())}: {Message}";
             }
             else
             {
