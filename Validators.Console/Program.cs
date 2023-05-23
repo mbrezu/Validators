@@ -46,8 +46,11 @@ var doc = JObject.Parse("""
                 "Name": "y",
                 "Value": 2,
                 "People": [
-                    1, 
                     {
+                        "Name": "Henry",
+                        "Age": 30,
+                        "Kind": "secondKind",
+                        "DateOfBirth": "yyyy"
                     }
                 ]
             },
