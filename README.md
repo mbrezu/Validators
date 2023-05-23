@@ -1,4 +1,13 @@
-﻿using Newtonsoft.Json.Linq;
+# Validators
+
+A simple library of "validator combinators" with some useful primitives defined for the [NewtonSoft JSON](https://www.newtonsoft.com/json) [DOM](https://www.newtonsoft.com/json/help/html/N_Newtonsoft_Json_Linq.htm).
+
+## Getting Started
+
+See [`Program.cs`](Validators.Console/Program.cs):
+
+```
+using Newtonsoft.Json.Linq;
 using static Validators.NewtonsoftJson.Json;
 
 var target = JObject.Parse("""
@@ -24,3 +33,4 @@ if (!errors.Any())
 {
     Console.WriteLine("All good!");
 }
+```
