@@ -28,12 +28,12 @@ namespace Validators.Test.JsonValidationSchema
                     ],
                     "Budget": 100,
                     "CreationDate": "xxx",
-                    "Properties": [
-                        {
+                    "Properties": {
+                        "first": {
                             "Name": "x",
                             "Value": 1
                         },
-                        {
+                        "second": {
                             "Name": "y",
                             "Value": 2,
                             "People": [
@@ -44,8 +44,8 @@ namespace Validators.Test.JsonValidationSchema
                                     "DateOfBirth": "yyyy"
                                 }
                             ]
-                        },
-                    ]
+                        }
+                    }
                 }
                 """);
             var schema = ValidationSchema.FromType(typeof(Team),

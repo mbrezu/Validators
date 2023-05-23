@@ -83,7 +83,7 @@ namespace Validators.NewtonsoftJson
                 else if (isDictionary(type))
                 {
                     var elementType = getFirstIDictionary(type)!.GetGenericArguments().ElementAt(1);
-                    return new ArraySpec(getValidatorSpec(elementType));
+                    return new DictionarySpec(getValidatorSpec(elementType));
                 }
                 else if (isArray(type))
                 {
@@ -228,7 +228,8 @@ namespace Validators.NewtonsoftJson
         Boolean,
         Null,
         Type,
-        Array
+        Array,
+        Dictionary
     }
 
     public abstract record ValidatorSpec(ValidatorSpecKind Kind)
@@ -294,4 +295,13 @@ namespace Validators.NewtonsoftJson
             Dictionary<string, IValidator<JToken>> existingValidators)
             => IsArrayOf(ElementValidator.GetValidator(existingValidators));
     }
+
+    public record DictionarySpec(ValidatorSpec ElementValidator)
+    : ValidatorSpec(ValidatorSpecKind.Array)
+    {
+        public override IValidator<JToken> GetValidator(
+            Dictionary<string, IValidator<JToken>> existingValidators)
+            => IsDictionaryOf(ElementValidator.GetValidator(existingValidators));
+    }
+
 }
