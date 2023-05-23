@@ -70,7 +70,7 @@ namespace Validators.NewtonsoftJson
                 }
                 else if (type.IsEnum)
                 {
-                    return new OneOfSpec(options!.IgnoreCase, Enum.GetNames(type));
+                    return new OneOfSpec(options!.EnumIgnoreCase, Enum.GetNames(type));
                 }
                 else if (isDictionary(type))
                 {
@@ -121,7 +121,7 @@ namespace Validators.NewtonsoftJson
     public record TypeAndProperty(string Type, string Property);
 
     public record ValidationSchemaOptions(
-        bool IgnoreCase,
+        bool EnumIgnoreCase,
         bool AllowExtras,
         IEnumerable<TypeAndProperty>? Required = null,
         IEnumerable<TypeAndProperty>? Optional = null)
