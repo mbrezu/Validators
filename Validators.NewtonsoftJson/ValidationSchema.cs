@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using System.Collections.Immutable;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using Validators.Core;
@@ -46,14 +47,20 @@ namespace Validators.NewtonsoftJson
             }
             var others = new List<TypeValidation>();
             string getTypeName(Type type) => type.FullName ?? type.Name;
+#pragma warning disable RCS1077 // Optimize LINQ method call.
             Type? getFirstIDictionary(Type type)
                 => type.GetInterfaces().FirstOrDefault(
                     x => x.IsGenericType
                     && x.GetGenericTypeDefinition() == typeof(IDictionary<,>)
                     && x.GetGenericArguments().First() == typeof(string));
+#pragma warning restore RCS1077 // Optimize LINQ method call.
             bool isDictionary(Type type) => getFirstIDictionary(type) != null;
+#pragma warning disable RCS1077 // Optimize LINQ method call.
             Type? getFirstIEnumerable(Type type)
-                => type.GetInterfaces().FirstOrDefault(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+                => type.GetInterfaces().FirstOrDefault(
+                    x => x.IsGenericType
+                    && x.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+#pragma warning restore RCS1077 // Optimize LINQ method call.
             bool isArray(Type type) => getFirstIEnumerable(type) != null;
             ValidatorSpec getValidatorSpec(Type type)
             {
@@ -137,24 +144,43 @@ namespace Validators.NewtonsoftJson
 
     public record ValidationSchemaOptions(
         bool EnumIgnoreCase,
-        bool AllowExtras,
-        IEnumerable<TypeAndProperty>? Required = null,
-        IEnumerable<TypeAndProperty>? Optional = null)
+        bool AllowExtras)
     {
+        private ImmutableList<TypeAndProperty> _required = ImmutableList<TypeAndProperty>.Empty;
+        private ImmutableList<TypeAndProperty> _optional = ImmutableList<TypeAndProperty>.Empty;
+
         private static readonly ValidationSchemaOptions _empty = new(true, true);
 #pragma warning disable RCS1085 // Use auto-implemented property.
         public static ValidationSchemaOptions Empty => _empty;
 #pragma warning restore RCS1085 // Use auto-implemented property.
 
+        public ValidationSchemaOptions SetEnumIgnoreCase(bool value)
+            => this with { EnumIgnoreCase = value };
+
+        public ValidationSchemaOptions SetAllowExtras(bool value)
+            => this with { AllowExtras = value };
+
+        public ValidationSchemaOptions AddRequired<T>(Expression<Func<T, object?>> selector)
+            => this with
+            {
+                _required = _required.Add(TypeAndProperty.From(selector))
+            };
+
+        public ValidationSchemaOptions AddOptional<T>(Expression<Func<T, object?>> selector)
+            => this with
+            {
+                _optional = _optional.Add(TypeAndProperty.From(selector))
+            };
+
         public bool IsRequired(Type type, string propertyName, Type propertyType)
         {
             bool isMentioned(IEnumerable<TypeAndProperty>? list)
                 => list?.Any(x => x.Type == type && x.Property == propertyName) == true;
-            if (isMentioned(Required))
+            if (isMentioned(_required))
             {
                 return true;
             }
-            if (isMentioned(Optional))
+            if (isMentioned(_optional))
             {
                 return false;
             }

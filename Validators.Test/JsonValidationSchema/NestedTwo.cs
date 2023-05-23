@@ -48,14 +48,11 @@ namespace Validators.Test.JsonValidationSchema
                     ]
                 }
                 """);
-            var schema = ValidationSchema.FromType(typeof(Team), ValidationSchemaOptions.Empty with
-            {
-                AllowExtras = false,
-                Optional = new TypeAndProperty[]
-                {
-                    TypeAndProperty.From<Property>(x => x.People)
-                }
-            });
+            var schema = ValidationSchema.FromType(typeof(Team),
+                ValidationSchemaOptions
+                    .Empty
+                    .SetAllowExtras(false)
+                    .AddOptional<Property>(x => x.People));
             var validator = schema.GetValidator();
 
             // Act

@@ -142,13 +142,11 @@ namespace Validators.Test.JsonValidationSchema
                     "kind": "firstkind",
                 }
                 """);
-            var schema = ValidationSchema.FromType(typeof(Person), ValidationSchemaOptions.Empty with
-            {
-                Required = new TypeAndProperty[]
-                {
-                    TypeAndProperty.From<Person>(x => x.IsAdmin)
-                }
-            });
+            var schema = ValidationSchema.FromType(
+                typeof(Person),
+                ValidationSchemaOptions
+                    .Empty
+                    .AddRequired<Person>(x => x.IsAdmin));
             var validator = schema.GetValidator();
 
             // Act
@@ -159,7 +157,7 @@ namespace Validators.Test.JsonValidationSchema
             errors.ElementAt(0).Message.Should().Be("Key 'IsAdmin' is missing.");
             errors.ElementAt(0).Path.Should().BeEmpty();
         }
-        
+
         [Fact]
         public void PassesOptionalOption()
         {
@@ -170,13 +168,10 @@ namespace Validators.Test.JsonValidationSchema
                     "age": 10,
                 }
                 """);
-            var schema = ValidationSchema.FromType(typeof(Person), ValidationSchemaOptions.Empty with
-            {
-                Optional = new TypeAndProperty[]
-                {
-                    TypeAndProperty.From<Person>(x => x.Kind)
-                }
-            });
+            var schema = ValidationSchema.FromType(
+                typeof(Person), ValidationSchemaOptions
+                    .Empty
+                    .AddOptional<Person>(x => x.Kind));
             var validator = schema.GetValidator();
 
             // Act

@@ -224,12 +224,12 @@ Let's forbid extra fields and make `Budget` a required field:
 
 #!csharp
 
-schema = ValidationSchema.FromType(typeof(Team), ValidationSchemaOptions.Empty with {
-    AllowExtras = false,
-    Required = new TypeAndProperty[] {
-        new TypeAndProperty(typeof(Team).FullName!, nameof(Team.Budget))
-    }
-}); // We generate the validation schema for `Team`, not `Person`.
+schema = ValidationSchema.FromType(
+    typeof(Team), // We generate the validation schema for `Team`, not `Person`.
+    ValidationSchemaOptions
+        .Empty 
+        .SetAllowExtras(false)
+        .AddRequired<Team>(x => x.Budget));
 validator = schema.GetValidator();
 validator.Validate(target)
 
@@ -245,14 +245,12 @@ target = JObject.Parse("""
         "Budget": 100
     }
     """);
-schema = ValidationSchema.FromType(typeof(Team), ValidationSchemaOptions.Empty with {
-    AllowExtras = false,
-    Required = new TypeAndProperty[] {
-        new TypeAndProperty(typeof(Team).FullName!, nameof(Team.Budget))
-    },
-    Optional = new TypeAndProperty[] {
-        new TypeAndProperty(typeof(Team).FullName!, nameof(Team.Lead))
-    }
-}); // We generate the validation schema for `Team`, not `Person`.
+schema = ValidationSchema.FromType(
+    typeof(Team), // We generate the validation schema for `Team`, not `Person`.
+    ValidationSchemaOptions
+        .Empty
+        .SetAllowExtras(false)
+        .AddRequired<Team>(x => x.Budget)
+        .AddOptional<Team>(x => x.Lead));
 validator = schema.GetValidator();
 validator.Validate(target)
