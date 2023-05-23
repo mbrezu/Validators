@@ -46,23 +46,23 @@ namespace Validators.NewtonsoftJson
                 options = ValidationSchemaOptions.Empty;
             }
             var others = new List<TypeValidation>();
-            string getTypeName(Type type) => type.FullName ?? type.Name;
+            static string getTypeName(Type type) => type.FullName ?? type.Name;
 #pragma warning disable RCS1077 // Optimize LINQ method call.
-            Type? getFirstIDictionary(Type type)
+            static Type? getFirstIDictionary(Type type)
                 => type.GetInterfaces().FirstOrDefault(
                     x => x.IsGenericType
                     && x.GetGenericTypeDefinition() == typeof(IDictionary<,>)
                     && x.GetGenericArguments().First() == typeof(string));
 #pragma warning restore RCS1077 // Optimize LINQ method call.
-            bool isDictionary(Type type) => getFirstIDictionary(type) != null;
+            static bool isDictionary(Type type) => getFirstIDictionary(type) != null;
 #pragma warning disable RCS1077 // Optimize LINQ method call.
-            Type? getFirstIEnumerable(Type type)
+            static Type? getFirstIEnumerable(Type type)
                 => type.GetInterfaces().FirstOrDefault(
                     x => x.IsGenericType
                     && x.GetGenericTypeDefinition() == typeof(IEnumerable<>));
 #pragma warning restore RCS1077 // Optimize LINQ method call.
-            bool isArray(Type type) => getFirstIEnumerable(type) != null;
-            ValidatorSpec getValidatorSpec(Type type)
+            static bool isArray(Type type) => getFirstIEnumerable(type) != null;
+            ValidatorSpec getValidatorSpec(Type type, Type parentType, string name)
             {
                 if (numberTypes.Contains(type))
                 {
@@ -83,29 +83,35 @@ namespace Validators.NewtonsoftJson
                 else if (isDictionary(type))
                 {
                     var elementType = getFirstIDictionary(type)!.GetGenericArguments().ElementAt(1);
-                    return new DictionarySpec(getValidatorSpec(elementType));
+                    return new DictionarySpec(
+                        getValidatorSpec(elementType, typeof(IDictionary<,>), ""),
+                        options!.GetMinCount(parentType, name),
+                        options!.GetMaxCount(parentType, name));
                 }
                 else if (isArray(type))
                 {
                     var elementType = getFirstIEnumerable(type)!.GetGenericArguments().First();
-                    return new ArraySpec(getValidatorSpec(elementType));
+                    return new ArraySpec(
+                        getValidatorSpec(elementType, typeof(IEnumerable<>), ""),
+                        options!.GetMinCount(parentType, name),
+                        options!.GetMaxCount(parentType, name));
                 }
                 else if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
                 {
-                    return getValidatorSpec(type.GetGenericArguments().First());
+                    return getValidatorSpec(type.GetGenericArguments().First(), parentType, name);
                 }
                 else
                 {
-                    var name = getTypeName(type);
-                    if (name != "System.Object")
+                    var typeName = getTypeName(type);
+                    if (typeName != "System.Object")
                     {
-                        var fromOthers = others!.Find(x => x.Name == name);
+                        var fromOthers = others!.Find(x => x.Name == typeName);
                         if (fromOthers == null)
                         {
                             others!.Add(fromType(type));
                         }
                     }
-                    return new TypeSpec(name);
+                    return new TypeSpec(typeName);
                 }
             }
             TypeValidation fromType(Type type)
@@ -115,7 +121,7 @@ namespace Validators.NewtonsoftJson
                     .Select(x => new FieldValidation(
                         x.Name,
                         options!.IsRequired(type, x.Name, x.PropertyType),
-                        getValidatorSpec(x.PropertyType)))
+                        getValidatorSpec(x.PropertyType, type, x.Name)))
                     .ToList();
                 return new TypeValidation(
                     getTypeName(type),
@@ -148,6 +154,8 @@ namespace Validators.NewtonsoftJson
     {
         private ImmutableList<TypeAndProperty> _required = ImmutableList<TypeAndProperty>.Empty;
         private ImmutableList<TypeAndProperty> _optional = ImmutableList<TypeAndProperty>.Empty;
+        private ImmutableDictionary<TypeAndProperty, int> _minCounts = ImmutableDictionary<TypeAndProperty, int>.Empty;
+        private ImmutableDictionary<TypeAndProperty, int> _maxCounts = ImmutableDictionary<TypeAndProperty, int>.Empty;
 
         private static readonly ValidationSchemaOptions _empty = new(true, true);
 #pragma warning disable RCS1085 // Use auto-implemented property.
@@ -171,6 +179,32 @@ namespace Validators.NewtonsoftJson
             {
                 _optional = _optional.Add(TypeAndProperty.From(selector))
             };
+
+        public ValidationSchemaOptions SetMinCount<T>(Expression<Func<T, object?>> selector, int minSize)
+            => this with
+            {
+                _minCounts = _minCounts.Add(TypeAndProperty.From(selector), minSize)
+            };
+
+        public ValidationSchemaOptions SetMaxCount<T>(Expression<Func<T, object?>> selector, int maxSize)
+            => this with
+            {
+                _maxCounts = _maxCounts.Add(TypeAndProperty.From(selector), maxSize)
+            };
+
+        public int? GetMinCount(Type type, string propertyName)
+        {
+            return _minCounts.TryGetValue(new TypeAndProperty(type, propertyName), out int result)
+                ? result
+                : null;
+        }
+
+        public int? GetMaxCount(Type type, string propertyName)
+        {
+            return _maxCounts.TryGetValue(new TypeAndProperty(type, propertyName), out int result)
+                ? result
+                : null;
+        }
 
         public bool IsRequired(Type type, string propertyName, Type propertyType)
         {
@@ -288,20 +322,19 @@ namespace Validators.NewtonsoftJson
             : IsAnything;
     }
 
-    public record ArraySpec(ValidatorSpec ElementValidator)
+    public record ArraySpec(ValidatorSpec ElementValidator, int? MinCount, int? MaxCount)
         : ValidatorSpec(ValidatorSpecKind.Array)
     {
         public override IValidator<JToken> GetValidator(
             Dictionary<string, IValidator<JToken>> existingValidators)
-            => IsArrayOf(ElementValidator.GetValidator(existingValidators));
+            => IsArrayOf(ElementValidator.GetValidator(existingValidators), MinCount, MaxCount);
     }
 
-    public record DictionarySpec(ValidatorSpec ElementValidator)
+    public record DictionarySpec(ValidatorSpec ElementValidator, int? MinCount, int? MaxCount)
     : ValidatorSpec(ValidatorSpecKind.Array)
     {
         public override IValidator<JToken> GetValidator(
             Dictionary<string, IValidator<JToken>> existingValidators)
-            => IsDictionaryOf(ElementValidator.GetValidator(existingValidators));
+            => IsDictionaryOf(ElementValidator.GetValidator(existingValidators), MinCount, MaxCount);
     }
-
 }

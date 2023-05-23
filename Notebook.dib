@@ -326,4 +326,22 @@ schema = ValidationSchema.FromType(
         .SetRequired<Team>(x => x.Budget)
         .SetOptional<Team>(x => x.Lead));
 validator = schema.GetValidator();
+valid = !validator.Validate(target).Any();
+valid
+
+#!markdown
+
+OK, a team without a lead and with no members doesn't make much sense. Let's set a requirement of minimum 2 members in the team:
+
+#!csharp
+
+schema = ValidationSchema.FromType(
+    typeof(Team), // We generate the validation schema for `Team`, not `Person`.
+    ValidationSchemaOptions
+        .Empty
+        .SetAllowExtras(false)
+        .SetRequired<Team>(x => x.Budget)
+        .SetOptional<Team>(x => x.Lead)
+        .SetMinCount<Team>(x => x.Members, 2));
+validator = schema.GetValidator();
 validator.Validate(target)
