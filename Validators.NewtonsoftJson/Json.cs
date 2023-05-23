@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using Validators.Core;
 
@@ -21,6 +21,9 @@ namespace Validators.NewtonsoftJson
         public static IValidator<JToken> IsArrayOf(
             IValidator<JToken> elementValidator, int? minCount = null, int? maxCount = null)
             => new ArrayOf(elementValidator, minCount, maxCount);
+        public static IValidator<JToken> IsDictionaryOf(
+            IValidator<JToken> elementValidator, int? minCount = null, int? maxCount = null)
+            => new DictionaryOf(elementValidator, minCount, maxCount);
         public static IValidator<JToken> HasKey(bool ignoreCase, string key)
             => new HasKey(ignoreCase, key);
         public static IValidator<JToken> HasKey(string key) => new HasKey(true, key);
