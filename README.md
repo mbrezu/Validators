@@ -4,8 +4,6 @@ A simple library of "validator combinators" with some useful primitives defined 
 
 ## Getting Started
 
-See [`Program.cs`](Validators.Console/Program.cs) (and [tests](Validators.Test)):
-
 ```
 using Newtonsoft.Json.Linq;
 using static Validators.NewtonsoftJson.Json;
@@ -25,12 +23,24 @@ var validator = And(
 
 var errors = validator.Validate(target);
 
-foreach (var error in errors)
-{
-    Console.WriteLine(error);
-}
 if (!errors.Any())
 {
     Console.WriteLine("All good!");
 }
+else
+{
+    foreach (var error in errors)
+    {
+        Console.WriteLine(error);
+    }
+}
 ```
+
+The content above is from [`Program.cs`](Validators.Console/Program.cs).
+See also:
+* [A C# Notebook](Notebook.dib)
+* [tests](Validators.Test)
+  * [Basic validators](Validators.Test\JsonBasic.cs)
+  * [Automatic validator generation for non-trivial objects](Validators.Test\JsonValidationSchema\NestedTwo.cs)
+  * [Extract the invalid content](Validators.Test\ContentExtraction.cs)
+  * [Generic dictionaries](Validators.Test\JsonDictionary.cs)

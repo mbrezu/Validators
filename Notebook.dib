@@ -1,0 +1,133 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"languageName":"csharp","name":"csharp"}]}}
+
+#!markdown
+
+# Getting started with the Validators library.
+
+## A Basic Example
+
+First things first:
+
+#!csharp
+
+#r "Validators.NewtonsoftJson\bin\Debug\net6.0\Validators.NewtonsoftJson.dll"
+
+using static Validators.NewtonsoftJson.Json;
+using Newtonsoft.Json.Linq;
+
+#!markdown
+
+Let's create a `JObject` to validate:
+
+#!csharp
+
+var target = JObject.Parse("""
+    {
+        "a": 1,
+        "b": 2
+    }
+    """);
+
+#!markdown
+
+Then a validator which checks that:
+* the target is a `JObject` (by using `IsObject`) and
+* it has keys `"a"` and `"b"` (`HasRequiredKeys("a", "b")`) and
+* values for `"a"` and `"b"` are both numbers.
+
+#!csharp
+
+validator = And(
+    IsObject,
+    HasRequiredKeys("a", "b"),
+    DiveInto("a", IsNumber),
+    DiveInto("b", IsNumber));
+
+#!markdown
+
+And finally run the validator:
+
+#!csharp
+
+var valid = !validator.Validate(target).Any();
+valid
+
+#!markdown
+
+There are no errors. Let's introduce some and re-run the validator:
+
+#!csharp
+
+target = JObject.Parse("""
+    {
+        "a": 1,
+        "c": 2
+    }
+    """);
+validator.Validate(target).Display();
+
+#!markdown
+
+Let's also introduce the the restriction that no extra keys are allowed and re-run the validator.
+
+#!csharp
+
+validator = And(
+    IsObject,
+    HasRequiredKeys("a", "b"),
+    HasValidKeys("a", "b"),
+    DiveInto("a", IsNumber),
+    DiveInto("b", IsNumber));
+validator.Validate(target).Display();
+
+#!markdown
+
+Let's add a case sensitive enum validation:
+
+#!csharp
+
+validator = And(
+    IsObject,
+    HasRequiredKeys("a", "b"),
+    DiveInto("a", IsNumber),
+    DiveInto("b", IsNumber),
+    DiveInto("c", IsOneOf(false, "First", "Second"))); // Delete `false` to get the case insensitive (default) version.
+target = JObject.Parse("""
+    {
+        "a": 1,
+        "b": 2,
+        "c": "first"
+    }
+    """);
+validator.Validate(target).Display();
+
+#!markdown
+
+We can extract the invalid content:
+
+#!csharp
+
+var errors = validator.Validate(target);
+var content = errors.First().ExtractInvalidContent(target);
+content.ToString().Display();
+
+#!markdown
+
+Let's switch to a case insensitive enum validator and check that there are no errors:
+
+#!csharp
+
+validator = And(
+    IsObject,
+    HasRequiredKeys("a", "b"),
+    DiveInto("a", IsNumber),
+    DiveInto("b", IsNumber),
+    DiveInto("c", IsOneOf("First", "Second"))); // `IsOneOf` ignores case by default.
+valid = !validator.Validate(target).Any();
+valid
+
+#!markdown
+
+## Arrays

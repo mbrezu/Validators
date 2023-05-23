@@ -16,11 +16,14 @@ var validator = And(
 
 var errors = validator.Validate(target);
 
-foreach (var error in errors)
-{
-    Console.WriteLine(error);
-}
 if (!errors.Any())
 {
     Console.WriteLine("All good!");
+}
+else
+{
+    foreach (var error in errors)
+    {
+        Console.WriteLine(error);
+    }
 }
