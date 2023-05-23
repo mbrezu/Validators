@@ -4,7 +4,7 @@ A simple library of "validator combinators" with some useful primitives defined 
 
 ## Getting Started
 
-See [`Program.cs`](Validators.Console/Program.cs):
+See [`Program.cs`](Validators.Console/Program.cs) (and [tests](Validators.Test)):
 
 ```
 using Newtonsoft.Json.Linq;
