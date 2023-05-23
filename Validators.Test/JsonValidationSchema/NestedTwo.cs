@@ -53,7 +53,7 @@ namespace Validators.Test.JsonValidationSchema
                 AllowExtras = false,
                 Optional = new TypeAndProperty[]
                 {
-                    new TypeAndProperty(typeof(Property).FullName!, nameof(Property.People))
+                    TypeAndProperty.From<Property>(x => x.People)
                 }
             });
             var validator = schema.GetValidator();

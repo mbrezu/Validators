@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using Validators.Core;
 using static Validators.NewtonsoftJson.Json;
@@ -106,7 +107,7 @@ namespace Validators.NewtonsoftJson
                 var fieldValidations = properties
                     .Select(x => new FieldValidation(
                         x.Name,
-                        options!.IsRequired(getTypeName(type), x.Name, x.PropertyType),
+                        options!.IsRequired(type, x.Name, x.PropertyType),
                         getValidatorSpec(x.PropertyType)))
                     .ToList();
                 return new TypeValidation(
@@ -118,8 +119,21 @@ namespace Validators.NewtonsoftJson
         }
     }
 
-    // TODO: `Type` should be of type `Type`, not `string`.
-    public record TypeAndProperty(string Type, string Property);
+    public record TypeAndProperty(Type Type, string Property)
+    {
+        public static TypeAndProperty From<T>(Expression<Func<T, object?>> selector)
+        {
+            var expression = selector.Body as UnaryExpression;
+            var operand = expression?.Operand as MemberExpression
+                ?? selector.Body as MemberExpression;
+            var name = operand?.Member?.Name;
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException($"Invalid selector expression: {selector}", nameof(selector));
+            }
+            return new TypeAndProperty(typeof(T), name);
+        }
+    }
 
     public record ValidationSchemaOptions(
         bool EnumIgnoreCase,
@@ -132,10 +146,10 @@ namespace Validators.NewtonsoftJson
         public static ValidationSchemaOptions Empty => _empty;
 #pragma warning restore RCS1085 // Use auto-implemented property.
 
-        public bool IsRequired(string typeName, string propertyName, Type propertyType)
+        public bool IsRequired(Type type, string propertyName, Type propertyType)
         {
             bool isMentioned(IEnumerable<TypeAndProperty>? list)
-                => list?.Any(x => x.Type == typeName && x.Property == propertyName) == true;
+                => list?.Any(x => x.Type == type && x.Property == propertyName) == true;
             if (isMentioned(Required))
             {
                 return true;

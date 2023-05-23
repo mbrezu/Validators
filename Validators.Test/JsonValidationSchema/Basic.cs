@@ -146,7 +146,7 @@ namespace Validators.Test.JsonValidationSchema
             {
                 Required = new TypeAndProperty[]
                 {
-                    new TypeAndProperty(typeof(Person).FullName!, nameof(Person.IsAdmin))
+                    TypeAndProperty.From<Person>(x => x.IsAdmin)
                 }
             });
             var validator = schema.GetValidator();
@@ -174,7 +174,7 @@ namespace Validators.Test.JsonValidationSchema
             {
                 Optional = new TypeAndProperty[]
                 {
-                    new TypeAndProperty(typeof(Person).FullName!, nameof(Person.Kind))
+                    TypeAndProperty.From<Person>(x => x.Kind)
                 }
             });
             var validator = schema.GetValidator();
