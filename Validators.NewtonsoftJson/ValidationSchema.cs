@@ -46,22 +46,6 @@ namespace Validators.NewtonsoftJson
                 options = ValidationSchemaOptions.Empty;
             }
             var others = new List<TypeValidation>();
-            static string getTypeName(Type type) => type.FullName ?? type.Name;
-#pragma warning disable RCS1077 // Optimize LINQ method call.
-            static Type? getFirstIDictionary(Type type)
-                => type.GetInterfaces().FirstOrDefault(
-                    x => x.IsGenericType
-                    && x.GetGenericTypeDefinition() == typeof(IDictionary<,>)
-                    && x.GetGenericArguments().First() == typeof(string));
-#pragma warning restore RCS1077 // Optimize LINQ method call.
-            static bool isDictionary(Type type) => getFirstIDictionary(type) != null;
-#pragma warning disable RCS1077 // Optimize LINQ method call.
-            static Type? getFirstIEnumerable(Type type)
-                => type.GetInterfaces().FirstOrDefault(
-                    x => x.IsGenericType
-                    && x.GetGenericTypeDefinition() == typeof(IEnumerable<>));
-#pragma warning restore RCS1077 // Optimize LINQ method call.
-            static bool isArray(Type type) => getFirstIEnumerable(type) != null;
             ValidatorSpec getValidatorSpec(Type type, Type parentType, string name)
             {
                 if (numberTypes.Contains(type))
@@ -80,17 +64,17 @@ namespace Validators.NewtonsoftJson
                 {
                     return new OneOfSpec(options!.EnumIgnoreCase, Enum.GetNames(type));
                 }
-                else if (isDictionary(type))
+                else if (type.IsDictionaryOfString())
                 {
-                    var elementType = getFirstIDictionary(type)!.GetGenericArguments().ElementAt(1);
+                    var elementType = type.GetDictionaryOfStringValueType();
                     return new DictionarySpec(
                         getValidatorSpec(elementType, typeof(IDictionary<,>), ""),
                         options!.GetMinCount(parentType, name),
                         options!.GetMaxCount(parentType, name));
                 }
-                else if (isArray(type))
+                else if (type.IsArray())
                 {
-                    var elementType = getFirstIEnumerable(type)!.GetGenericArguments().First();
+                    var elementType = type.GetArrayElementType();
                     return new ArraySpec(
                         getValidatorSpec(elementType, typeof(IEnumerable<>), ""),
                         options!.GetMinCount(parentType, name),
@@ -102,7 +86,7 @@ namespace Validators.NewtonsoftJson
                 }
                 else
                 {
-                    var typeName = getTypeName(type);
+                    var typeName = type.GetFullNameOrName();
                     if (typeName != "System.Object")
                     {
                         var fromOthers = others!.Find(x => x.Name == typeName);
@@ -124,7 +108,7 @@ namespace Validators.NewtonsoftJson
                         getValidatorSpec(x.PropertyType, type, x.Name)))
                     .ToList();
                 return new TypeValidation(
-                    getTypeName(type),
+                    type.GetFullNameOrName(),
                     options!.AllowExtras,
                     fieldValidations);
             }
