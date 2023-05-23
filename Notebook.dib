@@ -131,3 +131,126 @@ valid
 #!markdown
 
 ## Arrays
+
+#!markdown
+
+## Dictionaries
+
+#!markdown
+
+## Automatic Generation
+
+#!markdown
+
+Let's define a simple type:
+
+#!csharp
+
+record Person(string Name, int Age);
+
+#!markdown
+
+And generate a validator for this type:
+
+#!csharp
+
+var schema = ValidationSchema.FromType(typeof(Person));
+validator = schema.GetValidator();
+
+#!markdown
+
+Let's test on some samples of content:
+
+#!csharp
+
+target = JObject.Parse("""
+    {
+    }
+    """);
+validator.Validate(target).Display();
+target = JObject.Parse("""
+    {
+        "Name": 10,
+        "Age": 20,
+    }
+    """);
+validator.Validate(target).Display();
+target = JObject.Parse("""
+    {
+        "Name": "Henry",
+        "Age": 20,
+    }
+    """);
+valid = !validator.Validate(target).Any();
+valid
+
+#!markdown
+
+Notice that the `Name: Not a string.` error has a non-empty `Path`.
+
+#!markdown
+
+Let's try again with more complicated types:
+
+#!csharp
+
+record Team(Person Lead, Person[] Members, decimal? Budget);
+
+schema = ValidationSchema.FromType(typeof(Team)); // We generate the validation schema for `Team`, not `Person`.
+validator = schema.GetValidator();
+
+target = JObject.Parse("""
+    {
+        "Lead": {
+            "Name": "Henry",
+            "Age": 20,
+            "Extra": true
+        },
+        "Members": []
+    }
+    """);
+valid = !validator.Validate(target).Any();
+valid
+
+#!markdown
+
+The `Budget` field is `Nullable` and the default schema assumes the field is not required (it's OK if it is `null`).
+
+The default schema generation also allows extra fields by default.
+
+Let's forbid extra fields and make `Budget` a required field:
+
+#!csharp
+
+schema = ValidationSchema.FromType(typeof(Team), ValidationSchemaOptions.Empty with {
+    AllowExtras = false,
+    Required = new TypeAndProperty[] {
+        new TypeAndProperty(typeof(Team).FullName!, nameof(Team.Budget))
+    }
+}); // We generate the validation schema for `Team`, not `Person`.
+validator = schema.GetValidator();
+validator.Validate(target)
+
+#!markdown
+
+Let's fix the content. We also want to make the `Lead` optional:
+
+#!csharp
+
+target = JObject.Parse("""
+    {
+        "Members": [],
+        "Budget": 100
+    }
+    """);
+schema = ValidationSchema.FromType(typeof(Team), ValidationSchemaOptions.Empty with {
+    AllowExtras = false,
+    Required = new TypeAndProperty[] {
+        new TypeAndProperty(typeof(Team).FullName!, nameof(Team.Budget))
+    },
+    Optional = new TypeAndProperty[] {
+        new TypeAndProperty(typeof(Team).FullName!, nameof(Team.Lead))
+    }
+}); // We generate the validation schema for `Team`, not `Person`.
+validator = schema.GetValidator();
+validator.Validate(target)

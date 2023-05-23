@@ -118,6 +118,7 @@ namespace Validators.NewtonsoftJson
         }
     }
 
+    // TODO: `Type` should be of type `Type`, not `string`.
     public record TypeAndProperty(string Type, string Property);
 
     public record ValidationSchemaOptions(
