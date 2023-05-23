@@ -53,4 +53,4 @@ if (!errors.Any())
 enum PersonKind { FirstKind, SecondKind }
 record Person(string Name, PersonKind Kind, int Age, bool? IsAdmin, DateTime? DateOfBirth);
 
-record Team(Person Lead, IEnumerable<Person> Members, decimal? Budget, DateTime CreationDate);
+record Team(Person Lead, Person[] Members, decimal? Budget, DateTime CreationDate);

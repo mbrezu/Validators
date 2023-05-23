@@ -45,8 +45,9 @@ namespace Validators.NewtonsoftJson
             }
             var others = new List<TypeValidation>();
             string getTypeName(Type type) => type.FullName ?? type.Name;
-            bool isArray(Type type)
-                => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>);
+            Type? getFirstIEnumerable(Type type)
+                => type.GetInterfaces().FirstOrDefault(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+            bool isArray(Type type) => getFirstIEnumerable(type) != null;
             ValidatorSpec getValidatorSpec(Type type)
             {
                 if (numberTypes.Contains(type))
@@ -67,7 +68,7 @@ namespace Validators.NewtonsoftJson
                 }
                 else if (isArray(type))
                 {
-                    var elementType = type.GetGenericArguments().First();
+                    var elementType = getFirstIEnumerable(type)!.GetGenericArguments().First();
                     return new ArraySpec(getValidatorSpec(elementType));
                 }
                 else if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
