@@ -52,7 +52,7 @@ namespace Validators.Test.JsonValidationSchema
                 ValidationSchemaOptions
                     .Empty
                     .SetAllowExtras(false)
-                    .AddOptional<Property>(x => x.People));
+                    .SetOptional<Property>(x => x.People));
             var validator = schema.GetValidator();
 
             // Act

@@ -160,13 +160,13 @@ namespace Validators.NewtonsoftJson
         public ValidationSchemaOptions SetAllowExtras(bool value)
             => this with { AllowExtras = value };
 
-        public ValidationSchemaOptions AddRequired<T>(Expression<Func<T, object?>> selector)
+        public ValidationSchemaOptions SetRequired<T>(Expression<Func<T, object?>> selector)
             => this with
             {
                 _required = _required.Add(TypeAndProperty.From(selector))
             };
 
-        public ValidationSchemaOptions AddOptional<T>(Expression<Func<T, object?>> selector)
+        public ValidationSchemaOptions SetOptional<T>(Expression<Func<T, object?>> selector)
             => this with
             {
                 _optional = _optional.Add(TypeAndProperty.From(selector))

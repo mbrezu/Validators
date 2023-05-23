@@ -302,7 +302,7 @@ schema = ValidationSchema.FromType(
     ValidationSchemaOptions
         .Empty 
         .SetAllowExtras(false)
-        .AddRequired<Team>(x => x.Budget));
+        .SetRequired<Team>(x => x.Budget));
 validator = schema.GetValidator();
 validator.Validate(target)
 
@@ -323,7 +323,7 @@ schema = ValidationSchema.FromType(
     ValidationSchemaOptions
         .Empty
         .SetAllowExtras(false)
-        .AddRequired<Team>(x => x.Budget)
-        .AddOptional<Team>(x => x.Lead));
+        .SetRequired<Team>(x => x.Budget)
+        .SetOptional<Team>(x => x.Lead));
 validator = schema.GetValidator();
 validator.Validate(target)

@@ -146,7 +146,7 @@ namespace Validators.Test.JsonValidationSchema
                 typeof(Person),
                 ValidationSchemaOptions
                     .Empty
-                    .AddRequired<Person>(x => x.IsAdmin));
+                    .SetRequired<Person>(x => x.IsAdmin));
             var validator = schema.GetValidator();
 
             // Act
@@ -171,7 +171,7 @@ namespace Validators.Test.JsonValidationSchema
             var schema = ValidationSchema.FromType(
                 typeof(Person), ValidationSchemaOptions
                     .Empty
-                    .AddOptional<Person>(x => x.Kind));
+                    .SetOptional<Person>(x => x.Kind));
             var validator = schema.GetValidator();
 
             // Act
