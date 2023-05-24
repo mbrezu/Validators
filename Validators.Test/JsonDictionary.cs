@@ -37,7 +37,7 @@ namespace Validators.Test
             // Assert
             errors.Should().HaveCount(1);
             errors.First().Message.Should().Be("Not an object.");
-            errors.First().Path.Should().BeEmpty();
+            errors.First().ReversePath.Should().BeEmpty();
         }
 
         [Fact]
@@ -71,7 +71,7 @@ namespace Validators.Test
             // Assert
             errors.Should().HaveCount(1);
             errors.First().Message.Should().Be("Not a string.");
-            errors.First().Path.Should().BeEquivalentTo(new string[] { "c" });
+            errors.First().ReversePath.Should().BeEquivalentTo(new string[] { "c" });
         }
 
         [Fact]
@@ -89,9 +89,9 @@ namespace Validators.Test
             // Assert
             errors.Should().HaveCount(2);
             errors.ElementAt(0).Message.Should().Be("Not a string.");
-            errors.ElementAt(0).Path.Should().BeEquivalentTo(new string[] { "b" });
+            errors.ElementAt(0).ReversePath.Should().BeEquivalentTo(new string[] { "b" });
             errors.ElementAt(1).Message.Should().Be("Not a string.");
-            errors.ElementAt(1).Path.Should().BeEquivalentTo(new string[] { "c" });
+            errors.ElementAt(1).ReversePath.Should().BeEquivalentTo(new string[] { "c" });
         }
 
         [Fact]
@@ -125,7 +125,7 @@ namespace Validators.Test
             // Assert
             errors.Should().HaveCount(1);
             errors.First().Message.Should().Be("Object property count is 3, but should be at least 5.");
-            errors.First().Path.Should().BeEmpty();
+            errors.First().ReversePath.Should().BeEmpty();
         }
 
         [Fact]
@@ -159,7 +159,7 @@ namespace Validators.Test
             // Assert
             errors.Should().HaveCount(1);
             errors.First().Message.Should().Be("Object property count is 3, but should be at most 2.");
-            errors.First().Path.Should().BeEmpty();
+            errors.First().ReversePath.Should().BeEmpty();
         }
     }
 }

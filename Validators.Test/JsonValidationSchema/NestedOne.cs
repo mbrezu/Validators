@@ -59,7 +59,7 @@ namespace Validators.Test.JsonValidationSchema
             // Assert
             errors.Should().HaveCount(1);
             errors.ElementAt(0).Message.Should().Be("Not an object.");
-            errors.ElementAt(0).Path.Should().BeEquivalentTo(new string[] { "0", "People" });
+            errors.ElementAt(0).ReversePath.Should().BeEquivalentTo(new string[] { "0", "People" });
         }
 
         [Fact]
@@ -82,11 +82,11 @@ namespace Validators.Test.JsonValidationSchema
             // Assert
             errors.Should().HaveCount(3);
             errors.ElementAt(0).Message.Should().Be("Key 'Name' is missing.");
-            errors.ElementAt(0).Path.Should().BeEquivalentTo(new string[] { "0", "People" });
+            errors.ElementAt(0).ReversePath.Should().BeEquivalentTo(new string[] { "0", "People" });
             errors.ElementAt(1).Message.Should().Be("Key 'Kind' is missing.");
-            errors.ElementAt(1).Path.Should().BeEquivalentTo(new string[] { "0", "People" });
+            errors.ElementAt(1).ReversePath.Should().BeEquivalentTo(new string[] { "0", "People" });
             errors.ElementAt(2).Message.Should().Be("Key 'Age' is missing.");
-            errors.ElementAt(2).Path.Should().BeEquivalentTo(new string[] { "0", "People" });
+            errors.ElementAt(2).ReversePath.Should().BeEquivalentTo(new string[] { "0", "People" });
         }
 
         [Fact]
@@ -117,7 +117,7 @@ namespace Validators.Test.JsonValidationSchema
             // Assert
             errors.Should().HaveCount(1);
             errors.ElementAt(0).Message.Should().Be("Key 'extra' is not valid.");
-            errors.ElementAt(0).Path.Should().BeEquivalentTo(new string[] { "0", "People" });
+            errors.ElementAt(0).ReversePath.Should().BeEquivalentTo(new string[] { "0", "People" });
         }
     }
 }

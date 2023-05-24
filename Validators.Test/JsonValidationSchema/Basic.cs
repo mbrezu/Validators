@@ -23,11 +23,11 @@ namespace Validators.Test.JsonValidationSchema
             // Assert
             errors.Should().HaveCount(3);
             errors.ElementAt(0).Message.Should().Be("Key 'Name' is missing.");
-            errors.ElementAt(0).Path.Should().BeEmpty();
+            errors.ElementAt(0).ReversePath.Should().BeEmpty();
             errors.ElementAt(1).Message.Should().Be("Key 'Kind' is missing.");
-            errors.ElementAt(1).Path.Should().BeEmpty();
+            errors.ElementAt(1).ReversePath.Should().BeEmpty();
             errors.ElementAt(2).Message.Should().Be("Key 'Age' is missing.");
-            errors.ElementAt(2).Path.Should().BeEmpty();
+            errors.ElementAt(2).ReversePath.Should().BeEmpty();
         }
 
         [Fact]
@@ -71,11 +71,11 @@ namespace Validators.Test.JsonValidationSchema
             // Assert
             errors.Should().HaveCount(3);
             errors.ElementAt(0).Message.Should().Be("Key 'Name' is missing.");
-            errors.ElementAt(0).Path.Should().BeEmpty();
+            errors.ElementAt(0).ReversePath.Should().BeEmpty();
             errors.ElementAt(1).Message.Should().Be("Key 'Kind' is missing.");
-            errors.ElementAt(1).Path.Should().BeEmpty();
+            errors.ElementAt(1).ReversePath.Should().BeEmpty();
             errors.ElementAt(2).Message.Should().Be("Key 'Age' is missing.");
-            errors.ElementAt(2).Path.Should().BeEmpty();
+            errors.ElementAt(2).ReversePath.Should().BeEmpty();
         }
 
         [Fact]
@@ -101,7 +101,7 @@ namespace Validators.Test.JsonValidationSchema
             // Assert
             errors.Should().HaveCount(1);
             errors.ElementAt(0).Message.Should().Be("Not one of (\"FirstKind\", \"SecondKind\").");
-            errors.ElementAt(0).Path.Should().BeEquivalentTo(new string[] { "Kind" });
+            errors.ElementAt(0).ReversePath.Should().BeEquivalentTo(new string[] { "Kind" });
         }
 
         [Fact]
@@ -128,7 +128,7 @@ namespace Validators.Test.JsonValidationSchema
             // Assert
             errors.Should().HaveCount(1);
             errors.ElementAt(0).Message.Should().Be("Key 'extra' is not valid.");
-            errors.ElementAt(0).Path.Should().BeEmpty();
+            errors.ElementAt(0).ReversePath.Should().BeEmpty();
         }
 
         [Fact]
@@ -155,7 +155,7 @@ namespace Validators.Test.JsonValidationSchema
             // Assert
             errors.Should().HaveCount(1);
             errors.ElementAt(0).Message.Should().Be("Key 'IsAdmin' is missing.");
-            errors.ElementAt(0).Path.Should().BeEmpty();
+            errors.ElementAt(0).ReversePath.Should().BeEmpty();
         }
 
         [Fact]

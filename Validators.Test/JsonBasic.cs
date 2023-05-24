@@ -78,7 +78,7 @@ namespace Validators.Test
             // Assert.
             errors.Should().HaveCount(1);
             errors.First().Message.Should().Be("Not a number.");
-            errors.First().Path.Should().BeEmpty();
+            errors.First().ReversePath.Should().BeEmpty();
         }
 
         [Fact]
@@ -98,7 +98,7 @@ namespace Validators.Test
             // Assert.
             errors.Should().HaveCount(1);
             errors.First().Message.Should().Be("Not a number.");
-            errors.First().Path.Should().BeEmpty();
+            errors.First().ReversePath.Should().BeEmpty();
         }
 
         [Fact]
@@ -136,7 +136,7 @@ namespace Validators.Test
             // Assert.
             errors.Should().HaveCount(1);
             errors.First().Message.Should().Be("Not a string.");
-            errors.First().Path.Should().BeEmpty();
+            errors.First().ReversePath.Should().BeEmpty();
         }
 
         [Fact]
@@ -174,7 +174,7 @@ namespace Validators.Test
             // Assert.
             errors.Should().HaveCount(1);
             errors.First().Message.Should().Be("""Not one of ("str", "test").""");
-            errors.First().Path.Should().BeEmpty();
+            errors.First().ReversePath.Should().BeEmpty();
         }
 
         [Fact]
@@ -216,7 +216,7 @@ namespace Validators.Test
             // Assert.
             errors.Should().HaveCount(1);
             errors.First().Message.Should().Be("""Not a match for regex ^\d{4}-\d{2}-\d{2}$.""");
-            errors.First().Path.Should().BeEmpty();
+            errors.First().ReversePath.Should().BeEmpty();
         }
 
         [Fact]
@@ -258,7 +258,7 @@ namespace Validators.Test
             // Assert.
             errors.Should().HaveCount(1);
             errors.First().Message.Should().Be("""Not a date.""");
-            errors.First().Path.Should().BeEmpty();
+            errors.First().ReversePath.Should().BeEmpty();
         }
 
         [Fact]
@@ -296,7 +296,7 @@ namespace Validators.Test
             // Assert.
             errors.Should().HaveCount(1);
             errors.First().Message.Should().Be("Not a boolean.");
-            errors.First().Path.Should().BeEmpty();
+            errors.First().ReversePath.Should().BeEmpty();
         }
 
         [Fact]
@@ -334,7 +334,7 @@ namespace Validators.Test
             // Assert.
             errors.Should().HaveCount(1);
             errors.First().Message.Should().Be("Not 'null'.");
-            errors.First().Path.Should().BeEmpty();
+            errors.First().ReversePath.Should().BeEmpty();
         }
 
         [Fact]
@@ -372,7 +372,7 @@ namespace Validators.Test
             // Assert.
             errors.Should().HaveCount(1);
             errors.First().Message.Should().Be("Not an object.");
-            errors.First().Path.Should().BeEmpty();
+            errors.First().ReversePath.Should().BeEmpty();
         }
     }
 }

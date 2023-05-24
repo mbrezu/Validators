@@ -26,7 +26,7 @@ namespace Validators.NewtonsoftJson
                     return content;
                 }
             }
-            return extract(content, error.Path.Reverse());
+            return extract(content, error.ReversePath.Reverse());
         }
 
         internal static string GetFullNameOrName(this Type type) => type.FullName ?? type.Name;

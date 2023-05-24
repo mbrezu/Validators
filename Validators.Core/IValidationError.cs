@@ -5,19 +5,19 @@ namespace Validators.Core
     public interface IValidationError
     {
         public string Message { get; }
-        public IEnumerable<string> Path { get; }
+        public IEnumerable<string> ReversePath { get; }
     }
 
     public class DefaultValidationError : IValidationError
     {
         public string Message { get; init; } = "";
-        public IEnumerable<string> Path { get; init; } = ImmutableList<string>.Empty;
+        public IEnumerable<string> ReversePath { get; init; } = ImmutableList<string>.Empty;
 
         public override string ToString()
         {
-            if (Path.Any())
+            if (ReversePath.Any())
             {
-                return $"{string.Join(".", Path.Reverse())}: {Message}";
+                return $"{string.Join(".", ReversePath.Reverse())}: {Message}";
             }
             else
             {

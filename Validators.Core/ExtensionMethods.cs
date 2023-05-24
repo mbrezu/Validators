@@ -9,7 +9,7 @@ namespace Validators.Core
             return new DefaultValidationError
             {
                 Message = error.Message,
-                Path = error.Path.ToImmutableList().Add(pathComponent)
+                ReversePath = error.ReversePath.ToImmutableList().Add(pathComponent)
             };
         }
     }

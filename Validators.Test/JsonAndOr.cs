@@ -53,9 +53,9 @@ namespace Validators.Test
             // Assert
             errors.Should().HaveCount(2);
             errors.ElementAt(0).Message.Should().Be("Key 'c' is missing.");
-            errors.ElementAt(0).Path.Should().BeEmpty();
+            errors.ElementAt(0).ReversePath.Should().BeEmpty();
             errors.ElementAt(1).Message.Should().Be("Not a number.");
-            errors.ElementAt(1).Path.Should().BeEquivalentTo(new string[] { "b" });
+            errors.ElementAt(1).ReversePath.Should().BeEquivalentTo(new string[] { "b" });
         }
 
         [Fact]
@@ -89,7 +89,7 @@ namespace Validators.Test
             // Assert
             errors.Should().HaveCount(1);
             errors.ElementAt(0).Message.Should().Be("Not one of (number, string).");
-            errors.ElementAt(0).Path.Should().BeEquivalentTo(new string[] { "3" });
+            errors.ElementAt(0).ReversePath.Should().BeEquivalentTo(new string[] { "3" });
         }
     }
 }

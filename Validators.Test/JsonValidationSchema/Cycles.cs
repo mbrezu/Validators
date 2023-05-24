@@ -61,7 +61,7 @@ namespace Validators.Test.JsonValidationSchema
             // Assert
             errors.Should().HaveCount(1);
             errors.ElementAt(0).Message.Should().Be("Not a string.");
-            errors.ElementAt(0).Path.Should().BeEquivalentTo(new string[] { "Name", "Parent", "Parent" });
+            errors.ElementAt(0).ReversePath.Should().BeEquivalentTo(new string[] { "Name", "Parent", "Parent" });
         }
 
         [Fact]
@@ -119,7 +119,7 @@ namespace Validators.Test.JsonValidationSchema
             // Assert
             errors.Should().HaveCount(1);
             errors.ElementAt(0).Message.Should().Be("Key 'Size' is missing.");
-            errors.ElementAt(0).Path.Should().BeEquivalentTo(new string[] { "Other2", "Other1", "Other2" });
+            errors.ElementAt(0).ReversePath.Should().BeEquivalentTo(new string[] { "Other2", "Other1", "Other2" });
         }
     }
 }

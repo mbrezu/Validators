@@ -60,7 +60,7 @@ namespace Validators.Test
             // Assert
             errors.Should().HaveCount(1);
             errors.First().Message.Should().Be("Key 'b' is not valid.");
-            errors.First().Path.Should().BeEmpty();
+            errors.First().ReversePath.Should().BeEmpty();
         }
 
         [Fact]
@@ -80,7 +80,7 @@ namespace Validators.Test
             // Assert
             errors.Should().HaveCount(1);
             errors.First().Message.Should().Be("Key 'A' is not valid.");
-            errors.First().Path.Should().BeEmpty();
+            errors.First().ReversePath.Should().BeEmpty();
         }
 
         [Fact]
@@ -136,7 +136,7 @@ namespace Validators.Test
             // Assert
             errors.Should().HaveCount(1);
             errors.First().Message.Should().Be("Doesn't have key 'a'.");
-            errors.First().Path.Should().BeEmpty();
+            errors.First().ReversePath.Should().BeEmpty();
         }
 
         [Fact]
@@ -156,7 +156,7 @@ namespace Validators.Test
             // Assert
             errors.Should().HaveCount(1);
             errors.First().Message.Should().Be("Doesn't have key 'B'.");
-            errors.First().Path.Should().BeEmpty();
+            errors.First().ReversePath.Should().BeEmpty();
         }
 
         [Fact]
@@ -215,7 +215,7 @@ namespace Validators.Test
             // Assert
             errors.Should().HaveCount(1);
             errors.First().Message.Should().Be("Key 'c' is missing.");
-            errors.First().Path.Should().BeEmpty();
+            errors.First().ReversePath.Should().BeEmpty();
         }
 
         [Fact]
@@ -236,7 +236,7 @@ namespace Validators.Test
             // Assert
             errors.Should().HaveCount(1);
             errors.First().Message.Should().Be("Key 'B' is missing.");
-            errors.First().Path.Should().BeEmpty();
+            errors.First().ReversePath.Should().BeEmpty();
         }
 
         [Fact]
@@ -300,7 +300,7 @@ namespace Validators.Test
             // Assert
             errors.Should().HaveCount(1);
             errors.First().Message.Should().Be("Not 'null'.");
-            errors.First().Path.Should().BeEquivalentTo(new string[] { "A" });
+            errors.First().ReversePath.Should().BeEquivalentTo(new string[] { "A" });
         }
 
         [Fact]
@@ -321,7 +321,7 @@ namespace Validators.Test
             // Assert
             errors.Should().HaveCount(1);
             errors.First().Message.Should().Be("Not 'null'.");
-            errors.First().Path.Should().BeEquivalentTo(new string[] { "a" });
+            errors.First().ReversePath.Should().BeEquivalentTo(new string[] { "a" });
         }
     }
 }

@@ -95,7 +95,7 @@ namespace Validators.Test.JsonValidationSchema
             // Assert
             errors.Should().HaveCount(1);
             errors.ElementAt(0).Message.Should().Be("Array count is 0, but should be at least 2.");
-            errors.ElementAt(0).Path.Should().BeEquivalentTo(new string[] { "Members" });
+            errors.ElementAt(0).ReversePath.Should().BeEquivalentTo(new string[] { "Members" });
         }
 
         [Fact]
@@ -125,7 +125,7 @@ namespace Validators.Test.JsonValidationSchema
             // Assert
             errors.Should().HaveCount(1);
             errors.ElementAt(0).Message.Should().Be("Object property count is 0, but should be at least 2.");
-            errors.ElementAt(0).Path.Should().BeEquivalentTo(new string[] { "Properties" });
+            errors.ElementAt(0).ReversePath.Should().BeEquivalentTo(new string[] { "Properties" });
         }
 
         [Fact]
@@ -173,7 +173,7 @@ namespace Validators.Test.JsonValidationSchema
             // Assert
             errors.Should().HaveCount(1);
             errors.ElementAt(0).Message.Should().Be("Array count is 2, but should be at most 1.");
-            errors.ElementAt(0).Path.Should().BeEquivalentTo(new string[] { "Members" });
+            errors.ElementAt(0).ReversePath.Should().BeEquivalentTo(new string[] { "Members" });
         }
 
         [Fact]
@@ -220,7 +220,7 @@ namespace Validators.Test.JsonValidationSchema
             // Assert
             errors.Should().HaveCount(1);
             errors.ElementAt(0).Message.Should().Be("Object property count is 2, but should be at most 1.");
-            errors.ElementAt(0).Path.Should().BeEquivalentTo(new string[] { "Properties" });
+            errors.ElementAt(0).ReversePath.Should().BeEquivalentTo(new string[] { "Properties" });
         }
     }
 }
