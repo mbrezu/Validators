@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using System.Collections.Immutable;
@@ -202,7 +202,17 @@ namespace Validators.NewtonsoftJson
                 : null;
         }
 
-        public bool IsRequired(Type type, string propertyName, Type propertyType)
+        private readonly static NullabilityInfoContext _nullabilityInfoContext = new();
+
+        private NullabilityInfo GetNullabilityInfo(PropertyInfo propertyInfo)
+        {
+            lock (_nullabilityInfoContext)
+            {
+                return _nullabilityInfoContext.Create(propertyInfo);
+            }
+        }
+
+        public bool IsRequired(PropertyInfo propertyInfo, Type type, string propertyName, Type propertyType)
         {
             bool isMentioned(IEnumerable<TypeAndProperty>? list)
                 => list?.Any(x => x.Type == type && x.Property == propertyName) == true;
@@ -215,7 +225,25 @@ namespace Validators.NewtonsoftJson
                 return false;
             }
             var isNullable = propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof(Nullable<>);
-            return !isNullable;
+            if (!isNullable)
+            {
+                if (propertyInfo.CustomAttributes.Any(x => x.GetType().Name == "NullableAttribute"))
+                {
+                    return false;
+                }
+                else if (GetNullabilityInfo(propertyInfo).WriteState == NullabilityState.Nullable)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 
