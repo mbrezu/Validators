@@ -15,7 +15,7 @@ First things first:
 #nullable enable
 #r "Validators.Json\bin\Debug\net7.0\Validators.Json.dll"
 
-using static Validators.Json.Newtonsoft.Json;
+using static Validators.Json.Newtonsoft.Library;
 using Newtonsoft.Json.Linq;
 
 #!markdown
@@ -231,6 +231,7 @@ And generate a validator for this type:
 #!csharp
 
 using Validators.Json;
+using ValidationSchema = Validators.Json.ValidationSchema<Validators.Json.Newtonsoft.Library>;
 var schema = ValidationSchema.FromType(typeof(Person));
 validator = schema.GetValidator();
 
