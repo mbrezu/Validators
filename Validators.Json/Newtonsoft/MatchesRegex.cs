@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using Validators.Core;
 
-namespace Validators.NewtonsoftJson
+namespace Validators.Json.Newtonsoft
 {
     class MatchesRegex : IValidator<JToken>
     {

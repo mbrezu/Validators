@@ -6,9 +6,9 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Validators.Core;
-using static Validators.NewtonsoftJson.Json;
+using static Validators.Json.Newtonsoft.Json;
 
-namespace Validators.NewtonsoftJson
+namespace Validators.Json
 {
     public record ValidationSchema(TypeValidation Root, IEnumerable<TypeValidation> AllTypes)
     {

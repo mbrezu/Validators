@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Validators.Core\Validators.Core.csproj" />
-    <ProjectReference Include="..\Validators.NewtonsoftJson\Validators.NewtonsoftJson.csproj" />
+    <ProjectReference Include="..\Validators.Json\Validators.Json.csproj" />
   </ItemGroup>
 
 </Project>

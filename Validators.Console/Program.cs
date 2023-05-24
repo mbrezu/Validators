@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
-using static Validators.NewtonsoftJson.Json;
+using static Validators.Json.Newtonsoft.Json;
 
 var target = JObject.Parse("""
     {

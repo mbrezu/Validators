@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using Validators.Core;
 
-namespace Validators.NewtonsoftJson
+namespace Validators.Json.Newtonsoft
 {
     class ValidKeys : IValidator<JToken>
     {

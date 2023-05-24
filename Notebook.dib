@@ -13,9 +13,9 @@ First things first:
 #!csharp
 
 #nullable enable
-#r "Validators.NewtonsoftJson\bin\Debug\net7.0\Validators.NewtonsoftJson.dll"
+#r "Validators.Json\bin\Debug\net7.0\Validators.Json.dll"
 
-using static Validators.NewtonsoftJson.Json;
+using static Validators.Json.Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 #!markdown
@@ -110,7 +110,7 @@ We can extract the invalid content:
 
 #!csharp
 
-using Validators.NewtonsoftJson;
+using Validators.Json.Newtonsoft;
 
 var errors = validator.Validate(target);
 var content = errors.First().ExtractInvalidContent(target);
@@ -230,6 +230,7 @@ And generate a validator for this type:
 
 #!csharp
 
+using Validators.Json;
 var schema = ValidationSchema.FromType(typeof(Person));
 validator = schema.GetValidator();
 

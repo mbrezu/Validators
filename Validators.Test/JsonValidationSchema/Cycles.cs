@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Newtonsoft.Json.Linq;
-using Validators.NewtonsoftJson;
+using Validators.Json;
 
 namespace Validators.Test.JsonValidationSchema
 {

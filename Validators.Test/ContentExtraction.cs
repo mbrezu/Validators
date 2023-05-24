@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Newtonsoft.Json.Linq;
-using Validators.NewtonsoftJson;
-using static Validators.NewtonsoftJson.Json;
+using Validators.Json.Newtonsoft;
+using static Validators.Json.Newtonsoft.Json;
 
 namespace Validators.Test
 {

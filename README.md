@@ -8,7 +8,7 @@ Validators can be combined into bigger validators manualy (see example below) or
 
 ```
 using Newtonsoft.Json.Linq;
-using static Validators.NewtonsoftJson.Json;
+using static Validators.Json.Newtonsoft.Json;
 
 var target = JObject.Parse("""
     {
