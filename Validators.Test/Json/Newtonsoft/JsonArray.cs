@@ -1,19 +1,19 @@
 ﻿using FluentAssertions;
 using Newtonsoft.Json.Linq;
-using static Validators.Json.Newtonsoft.Json;
+using static Validators.Json.Newtonsoft.Library;
 
 namespace Validators.Test
 {
-    public class JsonDictionary
+    public class JsonArray
     {
         [Fact]
-        public void EmptyDictionaryPasses()
+        public void EmptyArrayPasses()
         {
             // Arrange
-            var target = JObject.Parse("""
-                {}
+            var target = JArray.Parse("""
+                []
                 """);
-            var validator = IsDictionaryOf(IsNull);
+            var validator = IsArrayOf(IsNull);
 
             // Act
             var errors = validator.Validate(target);
@@ -23,31 +23,31 @@ namespace Validators.Test
         }
 
         [Fact]
-        public void DictionaryFails()
+        public void ArrayFails()
         {
             // Arrange
-            var target = JArray.Parse("""
-                []
+            var target = JObject.Parse("""
+                {}
                 """);
-            var validator = IsDictionaryOf(IsNull);
+            var validator = IsArrayOf(IsNull);
 
             // Act
             var errors = validator.Validate(target);
 
             // Assert
             errors.Should().HaveCount(1);
-            errors.First().Message.Should().Be("Not an object.");
+            errors.First().Message.Should().Be("Not an array.");
             errors.First().ReversePath.Should().BeEmpty();
         }
 
         [Fact]
-        public void DictionaryPasses()
+        public void ArrayPasses()
         {
             // Arrange
-            var target = JObject.Parse("""
-                { "a": 1, "b": 2, "c": 3 }
+            var target = JArray.Parse("""
+                [1, 2, 3]
                 """);
-            var validator = IsDictionaryOf(IsNumber);
+            var validator = IsArrayOf(IsNumber);
 
             // Act
             var errors = validator.Validate(target);
@@ -57,13 +57,13 @@ namespace Validators.Test
         }
 
         [Fact]
-        public void StringDictionaryFails()
+        public void StringArrayFails()
         {
             // Arrange
-            var target = JObject.Parse("""
-                { "a": "foo", "b": "bar", "c": 3 }
+            var target = JArray.Parse("""
+                ["a", "b", 3]
                 """);
-            var validator = IsDictionaryOf(IsString);
+            var validator = IsArrayOf(IsString);
 
             // Act
             var errors = validator.Validate(target);
@@ -71,17 +71,17 @@ namespace Validators.Test
             // Assert
             errors.Should().HaveCount(1);
             errors.First().Message.Should().Be("Not a string.");
-            errors.First().ReversePath.Should().BeEquivalentTo(new string[] { "c" });
+            errors.First().ReversePath.Should().BeEquivalentTo(new string[] { "2" });
         }
 
         [Fact]
-        public void StringDictionaryMultipleFailures()
+        public void StringArrayMultipleFailures()
         {
             // Arrange
-            var target = JObject.Parse("""
-                { "a": "foo", "b": true, "c": 3 }
+            var target = JArray.Parse("""
+                ["a", true, 3]
                 """);
-            var validator = IsDictionaryOf(IsString);
+            var validator = IsArrayOf(IsString);
 
             // Act
             var errors = validator.Validate(target);
@@ -89,19 +89,19 @@ namespace Validators.Test
             // Assert
             errors.Should().HaveCount(2);
             errors.ElementAt(0).Message.Should().Be("Not a string.");
-            errors.ElementAt(0).ReversePath.Should().BeEquivalentTo(new string[] { "b" });
+            errors.ElementAt(0).ReversePath.Should().BeEquivalentTo(new string[] { "1" });
             errors.ElementAt(1).Message.Should().Be("Not a string.");
-            errors.ElementAt(1).ReversePath.Should().BeEquivalentTo(new string[] { "c" });
+            errors.ElementAt(1).ReversePath.Should().BeEquivalentTo(new string[] { "2" });
         }
 
         [Fact]
-        public void DictionaryMinCountPasses()
+        public void ArrayMinCountPasses()
         {
             // Arrange
-            var target = JObject.Parse("""
-                { "a": 1, "b": 2, "c": 3 }
+            var target = JArray.Parse("""
+                [1, 2, 3]
                 """);
-            var validator = IsDictionaryOf(IsNumber, 3);
+            var validator = IsArrayOf(IsNumber, 3);
 
             // Act
             var errors = validator.Validate(target);
@@ -111,31 +111,31 @@ namespace Validators.Test
         }
 
         [Fact]
-        public void DictionaryMinCountFails()
+        public void ArrayMinCountFails()
         {
             // Arrange
-            var target = JObject.Parse("""
-                { "a": 1, "b": 2, "c": 3 }
+            var target = JArray.Parse("""
+                [1, 2, 3]
                 """);
-            var validator = IsDictionaryOf(IsNumber, 5);
+            var validator = IsArrayOf(IsNumber, 5);
 
             // Act
             var errors = validator.Validate(target);
 
             // Assert
             errors.Should().HaveCount(1);
-            errors.First().Message.Should().Be("Object property count is 3, but should be at least 5.");
+            errors.First().Message.Should().Be("Array count is 3, but should be at least 5.");
             errors.First().ReversePath.Should().BeEmpty();
         }
 
         [Fact]
-        public void DictionaryMaxCountPasses()
+        public void ArrayMaxCountPasses()
         {
             // Arrange
-            var target = JObject.Parse("""
-                { "a": 1, "b": 2, "c": 3 }
+            var target = JArray.Parse("""
+                [1, 2, 3]
                 """);
-            var validator = IsDictionaryOf(IsNumber, null, 3);
+            var validator = IsArrayOf(IsNumber, null, 3);
 
             // Act
             var errors = validator.Validate(target);
@@ -145,20 +145,20 @@ namespace Validators.Test
         }
 
         [Fact]
-        public void DictionaryMaxCountFails()
+        public void ArrayMaxCountFails()
         {
             // Arrange
-            var target = JObject.Parse("""
-                { "a": 1, "b": 2, "c": 3 }
+            var target = JArray.Parse("""
+                [1, 2, 3]
                 """);
-            var validator = IsDictionaryOf(IsNumber, null, 2);
+            var validator = IsArrayOf(IsNumber, null, 2);
 
             // Act
             var errors = validator.Validate(target);
 
             // Assert
             errors.Should().HaveCount(1);
-            errors.First().Message.Should().Be("Object property count is 3, but should be at most 2.");
+            errors.First().Message.Should().Be("Array count is 3, but should be at most 2.");
             errors.First().ReversePath.Should().BeEmpty();
         }
     }

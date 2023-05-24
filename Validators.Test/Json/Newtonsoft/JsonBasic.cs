@@ -1,7 +1,7 @@
 using FluentAssertions;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
-using static Validators.Json.Newtonsoft.Json;
+using static Validators.Json.Newtonsoft.Library;
 
 namespace Validators.Test
 {

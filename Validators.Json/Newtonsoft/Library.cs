@@ -4,7 +4,7 @@ using Validators.Core;
 
 namespace Validators.Json.Newtonsoft
 {
-    public static class Json
+    public class Library : IJsonDomValidators<JToken>
     {
         private static readonly IValidator<JToken> _anything = new Anything<JToken>();
 #pragma warning disable RCS1085 // Use auto-implemented property.
