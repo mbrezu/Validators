@@ -1,20 +1,21 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using System.Collections.Immutable;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using Validators.Core;
 using static Validators.NewtonsoftJson.Json;
 
 namespace Validators.NewtonsoftJson
 {
-    public record ValidationSchema(TypeValidation Root, IEnumerable<TypeValidation> Others)
+    public record ValidationSchema(TypeValidation Root, IEnumerable<TypeValidation> AllTypes)
     {
         public IValidator<JToken> GetValidator(bool ignoreCase = true)
         {
             var validators = new Dictionary<string, IValidator<JToken>>();
-            foreach (var type in Others)
+            foreach (var type in AllTypes)
             {
                 validators[type.Name] = type.GetValidator(ignoreCase, validators);
             }
@@ -45,7 +46,8 @@ namespace Validators.NewtonsoftJson
             {
                 options = ValidationSchemaOptions.Empty;
             }
-            var others = new List<TypeValidation>();
+            var allTypes = new List<TypeValidation>();
+            var stack = new Stack<string>();
             ValidatorSpec getValidatorSpec(Type type, Type parentType, string name)
             {
                 if (numberTypes.Contains(type))
@@ -87,12 +89,12 @@ namespace Validators.NewtonsoftJson
                 else
                 {
                     var typeName = type.GetFullNameOrName();
-                    if (typeName != "System.Object")
+                    if (typeName != "System.Object" && !stack!.Contains(typeName))
                     {
-                        var fromOthers = others!.Find(x => x.Name == typeName);
+                        var fromOthers = allTypes!.Find(x => x.Name == typeName);
                         if (fromOthers == null)
                         {
-                            others!.Add(fromType(type));
+                            allTypes!.Add(fromType(type));
                         }
                     }
                     return new TypeSpec(typeName);
@@ -100,19 +102,29 @@ namespace Validators.NewtonsoftJson
             }
             TypeValidation fromType(Type type)
             {
-                var properties = type.GetProperties();
-                var fieldValidations = properties
-                    .Select(x => new FieldValidation(
-                        x.Name,
-                        options!.IsRequired(type, x.Name, x.PropertyType),
-                        getValidatorSpec(x.PropertyType, type, x.Name)))
-                    .ToList();
-                return new TypeValidation(
-                    type.GetFullNameOrName(),
-                    options!.AllowExtras,
-                    fieldValidations);
+                stack!.Push(type.GetFullNameOrName());
+                try
+                {
+                    var properties = type.GetProperties();
+                    var fieldValidations = properties
+                        .Select(x => new FieldValidation(
+                            x.Name,
+                            options!.IsRequired(x, type, x.Name, x.PropertyType),
+                            getValidatorSpec(x.PropertyType, type, x.Name)))
+                        .ToList();
+                    return new TypeValidation(
+                        type.GetFullNameOrName(),
+                        options!.AllowExtras,
+                        fieldValidations);
+                }
+                finally
+                {
+                    stack.Pop();
+                }
             }
-            return new ValidationSchema(fromType(type), others);
+            var typeValidation = fromType(type);
+            allTypes.Add(typeValidation);
+            return new ValidationSchema(typeValidation, allTypes);
         }
     }
 
@@ -302,8 +314,10 @@ namespace Validators.NewtonsoftJson
         public override IValidator<JToken> GetValidator(
             Dictionary<string, IValidator<JToken>> existingValidators)
             => existingValidators.ContainsKey(TypeName)
-            ? existingValidators[TypeName]
-            : IsAnything;
+                ? existingValidators[TypeName]
+                : DelayedValidator(() => existingValidators.ContainsKey(TypeName)
+                    ? existingValidators[TypeName]
+                    : IsAnything);
     }
 
     public record ArraySpec(ValidatorSpec ElementValidator, int? MinCount, int? MaxCount)
