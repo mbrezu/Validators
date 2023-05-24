@@ -26,7 +26,7 @@ namespace Validators.Test
         }
 
         [Fact]
-        public void TestNumberPasses()
+        public void NumberPasses()
         {
             // Arrange.
             var target = JObject.Parse("""
@@ -44,7 +44,25 @@ namespace Validators.Test
         }
 
         [Fact]
-        public void TestNumberFails()
+        public void DelayedNumberPasses()
+        {
+            // Arrange.
+            var target = JObject.Parse("""
+                {
+                    "a": 1
+                }
+                """);
+            var validator = DelayedValidator(() => IsNumber);
+
+            // Act.
+            var errors = validator.Validate(target["a"]!);
+
+            // Assert.
+            errors.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void NumberFails()
         {
             // Arrange.
             var target = JObject.Parse("""
@@ -64,7 +82,27 @@ namespace Validators.Test
         }
 
         [Fact]
-        public void TestStringPasses()
+        public void DelayedNumberFails()
+        {
+            // Arrange.
+            var target = JObject.Parse("""
+                {
+                    "a": null
+                }
+                """);
+            var validator = DelayedValidator(() => IsNumber);
+
+            // Act.
+            var errors = validator.Validate(target["a"]!);
+
+            // Assert.
+            errors.Should().HaveCount(1);
+            errors.First().Message.Should().Be("Not a number.");
+            errors.First().Path.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void StringPasses()
         {
             // Arrange.
             var target = JObject.Parse("""
@@ -82,7 +120,7 @@ namespace Validators.Test
         }
 
         [Fact]
-        public void TestStringFails()
+        public void StringFails()
         {
             // Arrange.
             var target = JObject.Parse("""
@@ -102,7 +140,7 @@ namespace Validators.Test
         }
 
         [Fact]
-        public void TestOneOfPasses()
+        public void OneOfPasses()
         {
             // Arrange.
             var target = JObject.Parse("""
@@ -120,7 +158,7 @@ namespace Validators.Test
         }
 
         [Fact]
-        public void TestOneOfFails()
+        public void OneOfFails()
         {
             // Arrange.
             var target = JObject.Parse("""
@@ -140,7 +178,7 @@ namespace Validators.Test
         }
 
         [Fact]
-        public void TestMatchesRegexPasses()
+        public void MatchesRegexPasses()
         {
             // Arrange.
             var target = JObject.Parse("""
@@ -160,7 +198,7 @@ namespace Validators.Test
         }
 
         [Fact]
-        public void TestMatchesRegexFails()
+        public void MatchesRegexFails()
         {
             // Arrange.
             var target = JObject.Parse("""
@@ -182,7 +220,7 @@ namespace Validators.Test
         }
 
         [Fact]
-        public void TestCustomValidatorPasses()
+        public void CustomValidatorPasses()
         {
             // Arrange.
             var target = JObject.Parse("""
@@ -202,7 +240,7 @@ namespace Validators.Test
         }
 
         [Fact]
-        public void TestCustomValidatorFails()
+        public void CustomValidatorFails()
         {
             // Arrange.
             var target = JObject.Parse("""
@@ -224,7 +262,7 @@ namespace Validators.Test
         }
 
         [Fact]
-        public void TestBooleanPasses()
+        public void BooleanPasses()
         {
             // Arrange.
             var target = JObject.Parse("""
@@ -242,7 +280,7 @@ namespace Validators.Test
         }
 
         [Fact]
-        public void TestBooleanFails()
+        public void BooleanFails()
         {
             // Arrange.
             var target = JObject.Parse("""
@@ -262,7 +300,7 @@ namespace Validators.Test
         }
 
         [Fact]
-        public void TestNullPasses()
+        public void NullPasses()
         {
             // Arrange.
             var target = JObject.Parse("""
@@ -280,7 +318,7 @@ namespace Validators.Test
         }
 
         [Fact]
-        public void TestNullFails()
+        public void NullFails()
         {
             // Arrange.
             var target = JObject.Parse("""
@@ -300,7 +338,7 @@ namespace Validators.Test
         }
 
         [Fact]
-        public void TestObjectPasses()
+        public void ObjectPasses()
         {
             // Arrange.
             var target = JObject.Parse("""
@@ -318,7 +356,7 @@ namespace Validators.Test
         }
 
         [Fact]
-        public void TestObjectFails()
+        public void ObjectFails()
         {
             // Arrange.
             var target = JObject.Parse("""

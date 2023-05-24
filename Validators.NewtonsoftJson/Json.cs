@@ -46,5 +46,7 @@ namespace Validators.NewtonsoftJson
             => new RequiredKeys(true, requiredKeys);
         public static IValidator<JToken> And(params IValidator<JToken>[] children) => new And<JToken>(children);
         public static IValidator<JToken> Or(params IValidator<JToken>[] children) => new Or<JToken>(children);
+        public static IValidator<JToken> DelayedValidator(Func<IValidator<JToken>> validatorProvider)
+            => new DelayedValidator<JToken>(validatorProvider);
     }
 }
