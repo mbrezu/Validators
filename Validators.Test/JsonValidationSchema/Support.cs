@@ -19,4 +19,6 @@
 
     public record MutualCycle1(MutualCycle2? Other2, string Name);
     public record MutualCycle2(MutualCycle1? Other1, int Size);
+
+    public record ContainsNullableString(string? Name);
 }
