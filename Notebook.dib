@@ -12,6 +12,7 @@ First things first:
 
 #!csharp
 
+#nullable enable
 #r "Validators.NewtonsoftJson\bin\Debug\net7.0\Validators.NewtonsoftJson.dll"
 
 using static Validators.NewtonsoftJson.Json;
@@ -345,3 +346,92 @@ schema = ValidationSchema.FromType(
         .SetMinCount<Team>(x => x.Members, 2));
 validator = schema.GetValidator();
 validator.Validate(target)
+
+#!markdown
+
+### Cycles
+
+What about cyclic structures? Something like:
+
+#!csharp
+
+record MutualCycle1(MutualCycle2? Other2, string Name);
+record MutualCycle2(MutualCycle1? Other1, int Size);
+
+#!markdown
+
+Validators for these just work:
+
+#!csharp
+
+target = JObject.Parse("""
+    {
+        "name": "test",
+        "other2": {
+            "size": 2,
+            "other1": {
+                "name": "foo",
+                "other2": {
+                    "sizeo": 3
+                }
+            }
+        }
+    }
+    """);
+
+schema = ValidationSchema.FromType(typeof(MutualCycle1));
+validator = schema.GetValidator();
+validator.Validate(target)
+
+#!markdown
+
+Self referential cycles work too:
+
+#!csharp
+
+record SelfCycle(SelfCycle? Parent, string Name, int Size);
+
+target = JObject.Parse("""
+    {
+        "name": "test",
+        "size": 1,
+        "parent": {
+            "name": "foo",
+            "size": 2,
+            "parent": {
+                "name": 20,
+                "size": 3
+            }
+        }
+    }
+    """);
+schema = ValidationSchema.FromType(typeof(SelfCycle));
+validator = schema.GetValidator();
+validator.Validate(target)
+
+#!markdown
+
+Let's fix the target:
+
+#!csharp
+
+record SelfCycle(SelfCycle? Parent, string Name, int Size);
+
+target = JObject.Parse("""
+    {
+        "name": "test",
+        "size": 1,
+        "parent": {
+            "name": "foo",
+            "size": 2,
+            "parent": {
+                "name": "bar",
+                "size": 3
+            }
+        }
+    }
+    """);
+schema = ValidationSchema.FromType(typeof(SelfCycle));
+validator = schema.GetValidator();
+valid = !validator.Validate(target).Any();
+valid
